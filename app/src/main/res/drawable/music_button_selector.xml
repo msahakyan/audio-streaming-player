@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_activated="true">
+        <layer-list>
+            <item>
+                <shape
+                    android:innerRadius="0dp"
+                    android:shape="ring"
+                    android:thicknessRatio="2.1"
+                    android:useLevel="false">
+                    <solid android:color="@color/background_default_dark"/>
+                    <stroke
+                        android:width="1dp"
+                        android:color="@color/dark_grey"/>
+                </shape>
+            </item>
+            <item>
+                <bitmap android:gravity="center" android:src="@drawable/ic_av_volume_off" android:tileMode="repeat"/>
+            </item>
+        </layer-list>
+    </item>
+
+    <item android:state_activated="false">
+        <layer-list>
+            <item>
+                <shape
+                    android:innerRadius="0dp"
+                    android:shape="ring"
+                    android:thicknessRatio="2.1"
+                    android:useLevel="false">
+                    <solid android:color="@color/background_default_dark"/>
+                    <stroke
+                        android:width="1dp"
+                        android:color="@color/dark_grey"/>
+                </shape>
+            </item>
+            <item>
+                <bitmap android:gravity="center" android:src="@drawable/ic_av_volume_up" android:tileMode="repeat"/>
+            </item>
+        </layer-list>
+    </item>
+
+    <item>
+        <layer-list>
+            <item>
+                <shape
+                    android:innerRadius="0dp"
+                    android:shape="ring"
+                    android:thicknessRatio="2.1"
+                    android:useLevel="false">
+                    <solid android:color="@color/background_default_dark"/>
+                    <stroke
+                        android:width="1dp"
+                        android:color="@color/dark_grey"/>
+                </shape>
+            </item>
+            <item>
+                <bitmap android:gravity="center" android:src="@drawable/ic_av_volume_up" android:tileMode="repeat"/>
+            </item>
+        </layer-list>
+    </item>
+</selector>

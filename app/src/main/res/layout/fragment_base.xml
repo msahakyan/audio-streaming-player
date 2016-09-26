@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.github.rahatarmanahmed.cpv.CircularProgressView
+        android:id="@+id/progress_view"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="@dimen/progress_icon_size"
+        android:layout_height="@dimen/progress_icon_size"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        app:cpv_animAutostart="true"
+        app:cpv_color="@color/lighter_grey"
+        app:cpv_indeterminate="true"/>
+
+    <FrameLayout
+        android:id="@+id/error_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/no_data"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/error_message"
+            style="@style/Fma.Widget.TextView.NoData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"/>
+    </FrameLayout>
+</merge>

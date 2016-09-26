@@ -1,0 +1,62 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'me.tatarka.retrolambda'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion BUILD_TOOLS
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId "com.android.msahakyan.fma"
+        minSdkVersion 14
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+
+    // support libraries
+    compile "com.android.support:appcompat-v7:${SUPPORT_LIB_VERSION}"
+    compile "com.android.support:recyclerview-v7:${SUPPORT_LIB_VERSION}"
+    compile "com.android.support:cardview-v7:${SUPPORT_LIB_VERSION}"
+    compile "com.android.support:support-v4:${SUPPORT_LIB_VERSION}"
+
+    // volley library
+    compile 'com.android.volley:volley:1.0.0'
+
+    // dagger 2 libraries
+    apt 'com.google.dagger:dagger-compiler:2.0'
+    compile 'com.google.dagger:dagger:2.0'
+    provided 'javax.annotation:jsr250-api:1.0'
+
+    // square libraries
+    compile 'com.jakewharton.timber:timber:3.0.1'
+    compile 'com.jakewharton:butterknife:7.0.1'
+
+    // json parsing library
+    compile 'com.google.code.gson:gson:2.7'
+
+    // retrolambda (java-8 lambda support)
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
+
+    // Loading spinner library (https://github.com/rahatarmanahmed/CircularProgressView)
+    compile 'com.github.rahatarmanahmed:circularprogressview:2.5.0'
+
+    // Ripple pre lollipop (https://github.com/traex/RippleEffect)
+    compile 'com.github.traex.rippleeffect:library:1.3'
+}

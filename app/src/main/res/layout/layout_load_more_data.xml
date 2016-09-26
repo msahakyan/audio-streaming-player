@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/loading_failed_text"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:layout_margin="8dp"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:text="@string/error_load_more"
+        android:visibility="gone"/>
+
+    <com.github.rahatarmanahmed.cpv.CircularProgressView
+        android:id="@+id/loading_spinner"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="@dimen/progress_icon_size"
+        android:layout_height="@dimen/progress_icon_size"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:cpv_animAutostart="true"
+        app:cpv_color="@color/lighter_grey"
+        app:cpv_indeterminate="true"/>
+
+</merge>

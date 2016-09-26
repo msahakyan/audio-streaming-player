@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_size_small"
+    app:cardPreventCornerOverlap="false">
+
+    <com.andexert.library.RippleView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:rv_color="@color/colorAccent"
+        app:rv_rippleDuration="@integer/ripple_duration"
+        app:rv_zoomDuration="@integer/zoom_duration">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.android.msahakyan.fma.view.FadeInNetworkImageView
+                android:id="@+id/album_image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/album_image_height"
+                android:contentDescription="@string/description_album_image"
+                android:scaleType="centerCrop"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_size_small"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/album_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:lines="1"
+                    android:paddingLeft="@dimen/padding_size_small"
+                    android:paddingRight="@dimen/padding_size_small"
+                    android:paddingTop="@dimen/padding_size_extra_small"
+                    android:textSize="@dimen/text_size_title"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/artist_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/album_title"
+                    android:layout_toLeftOf="@+id/icon_track_count"
+                    android:layout_toStartOf="@+id/icon_track_count"
+                    android:gravity="start|center_vertical"
+                    android:lines="1"
+                    android:paddingBottom="@dimen/padding_size_small"
+                    android:paddingLeft="@dimen/padding_size_small"
+                    android:paddingRight="@dimen/padding_size_small"
+                    android:paddingTop="0dp"
+                    android:textSize="@dimen/text_size_normal"/>
+
+                <ImageView
+                    android:id="@id/icon_track_count"
+                    android:layout_width="@dimen/icon_track_width"
+                    android:layout_height="@dimen/icon_track_height"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/album_title"
+                    android:layout_marginLeft="@dimen/margin_size_extra_small"
+                    android:layout_marginRight="@dimen/margin_size_extra_small"
+                    android:layout_marginTop="@dimen/margin_size_extra_small"
+                    android:contentDescription="@string/description_track_count"
+                    android:src="@drawable/track_icon"/>
+
+                <TextView
+                    android:id="@+id/track_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/album_title"
+                    android:layout_marginEnd="@dimen/margin_right_track_count"
+                    android:layout_marginRight="@dimen/margin_right_track_count"
+                    android:layout_toLeftOf="@id/icon_track_count"
+                    android:layout_toStartOf="@id/icon_track_count"
+                    android:gravity="end|center_vertical"
+                    android:lines="1"
+                    android:paddingBottom="@dimen/padding_size_small"
+                    android:paddingTop="0dp"
+                    android:textSize="@dimen/text_size_normal"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </com.andexert.library.RippleView>
+
+</android.support.v7.widget.CardView>

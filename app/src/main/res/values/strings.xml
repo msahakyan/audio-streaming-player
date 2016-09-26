@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Free Music</string>
+
+    <string name="genres_fragment">Genres Fragment</string>
+    <string name="search_genre">Search music with this genre</string>
+    <string name="description_artist_image">Image of the artist</string>
+    <string name="description_track_image">Image of the track</string>
+    <string name="no_connection">No network connection</string>
+    <string name="dialog_connection_button_positive">Yes</string>
+    <string name="dialog_connection_button_negative">No</string>
+    <string name="dialog_connection_title">Connection error</string>
+    <string name="dialog_connection_message">Open wifi settings</string>
+    <string name="no_data">No data</string>
+    <string name="label_artist">artist:</string>
+    <string name="description_track_count">Track count</string>
+    <string name="toast_item_load_error">Can\'t load extra data of an item</string>
+    <string name="label_songs">Songs</string>
+    <string name="album_detail_info">Album detail information</string>
+    <string name="error_load_more">Can\'t load more data. Try again.</string>
+    <string name="button_play_pause">play/pause button</string>
+    <string name="description_album_image">Image of the album</string>
+    <string name="progress_start_val">00:00</string>
+    <string name="playing">Playing</string>
+    <string name="now_playing">Playing %1$s</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="description_blurred_image"/>
+    <string name="right_arrow_desc"/>
+    <string name="label_albums">Albums</string>
+
+    <string name="artist_location">Location: %1$s</string>
+    <string name="artist_favourites">Favourites count: %1$d</string>
+    <string name="artist_comments">Comments count: %1$d</string>
+    <string name="artist_bio">Artist Bio</string>
+    <string name="artist_creation_date">Created: %1$s</string>
+    <string name="no_more_tracks_to_load">There are no any more tracks to load in album %1$s</string>
+    <string name="free_music_app">Free Music \nApp</string>
+    <string name="button_mute_description">Mute/UnMute volume</string>
+    <string name="toast_back_to_exit">Click back button again to exit the app</string>
+</resources>

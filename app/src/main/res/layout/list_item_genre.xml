@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/selector_list_item">
+
+    <TextView
+        android:id="@+id/genre_title"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_list_item"
+        android:drawableEnd="@drawable/ic_arrow_right"
+        android:drawableRight="@drawable/ic_arrow_right"
+        android:ellipsize="end"
+        android:gravity="center_vertical|start"
+        android:lines="1"
+        android:paddingLeft="@dimen/padding_size_normal"
+        android:textAllCaps="false"
+        android:textSize="@dimen/text_size_pts"
+        android:textStyle="bold"
+        android:typeface="serif"/>
+
+    <View style="@style/ListItemDivider"/>
+
+</LinearLayout>
