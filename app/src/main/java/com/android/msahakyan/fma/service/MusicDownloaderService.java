@@ -44,6 +44,14 @@ public class MusicDownloaderService extends IntentService {
         if (intent != null) {
             String trackUrl = intent.getStringExtra(KEY_TRACK_URL);
             String trackName = intent.getStringExtra(KEY_TRACK_NAME);
+            if (trackUrl == null) {
+                Timber.w("Track url which we are going to download is null --skip");
+                return;
+            }
+            if (trackName == null) {
+                Timber.w("Track name which we are going to download is null --skip");
+                return;
+            }
             try {
                 downloadTrack(trackUrl, trackName);
             } catch (IOException e) {
