@@ -31,4 +31,5 @@
     <dimen name="margin_size_extra_small">3dp</dimen>
     <dimen name="padding_size_large">15dp</dimen>
     <dimen name="text_size_detail_title">20sp</dimen>
+    <dimen name="padding_size_extra_large">50dp</dimen>
 </resources>

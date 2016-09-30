@@ -59,4 +59,9 @@
         <item name="android:ellipsize">end</item>
     </style>
 
+    <style name="Fma.Widget.FloatingActionButton" parent="Widget.Design.FloatingActionButton">
+        <item name="backgroundTint">@color/fma_red</item>
+        <item name="borderWidth">0dp</item>
+    </style>
+
 </resources>

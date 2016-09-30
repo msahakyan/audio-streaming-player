@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import com.android.msahakyan.fma.app.FmaApplication;
 import com.android.msahakyan.fma.model.Track;
 import com.android.msahakyan.fma.network.NetworkManager;
 import com.android.msahakyan.fma.network.NetworkRequestListener;
+import com.android.msahakyan.fma.service.MusicDownloaderService;
 import com.android.msahakyan.fma.service.MusicService;
 import com.android.msahakyan.fma.util.AppUtils;
 import com.android.msahakyan.fma.util.BitmapUtils;
@@ -84,6 +86,8 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
     ImageView mButtonVolume;
     @Bind(R.id.progress_detail_view)
     CircularProgressView mProgressView;
+    @Bind(R.id.license)
+    ImageView mLicense;
 
     private MusicService mMusicService;
     private final Handler handler;
@@ -325,6 +329,26 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
         }
     }
 
+    @OnClick(R.id.button_download)
+    public void onDownloadButtonClick() {
+        Intent intent = new Intent(mActivity, MusicDownloaderService.class);
+        intent.putExtra(MusicDownloaderService.KEY_TRACK_URL, mItem.getFileUrl());
+        intent.putExtra(MusicDownloaderService.KEY_TRACK_NAME, mItem.getTitle());
+        mActivity.startService(intent);
+    }
+
+    @OnClick(R.id.license)
+    public void onLicenseViewClick() {
+        if (mItem.getLicenseUrl() == null) {
+            String trackTitle = mItem.getTitle();
+            Timber.e(getString(R.string.empty_license_url, trackTitle));
+            Toast.makeText(mActivity, getString(R.string.empty_license_url, trackTitle), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse((mItem.getLicenseUrl())));
+        startActivity(browserIntent);
+    }
+
     @OnClick(R.id.button_previous)
     public void onPreviousButtonClick() {
         if (!hasPrevious()) {
@@ -406,6 +430,7 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
         mSongTime.setText(track.getDuration());
         mProgressView.startAnimation();
         mProgressView.setVisibility(View.VISIBLE);
+        mLicense.bringToFront();
 
         setListeners();
         mPlaybackPaused = !mPlaybackPaused;

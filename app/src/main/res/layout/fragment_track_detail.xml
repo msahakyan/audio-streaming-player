@@ -1,6 +1,7 @@
 <RelativeLayout
     android:id="@+id/main_detail_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -13,6 +14,16 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="300dp">
+
+            <ImageView
+                android:id="@+id/license"
+                android:layout_width="70dp"
+                android:layout_height="22dp"
+                android:layout_gravity="end|top"
+                android:layout_margin="@dimen/margin_size_small"
+                android:background="@drawable/rectangular_selector"
+                android:contentDescription="@string/view_license"
+                android:src="@drawable/license"/>
 
             <ImageView
                 android:id="@+id/track_detail_image_container"
@@ -38,8 +49,8 @@
                 android:gravity="bottom|center_horizontal"
                 android:lines="1"
                 android:paddingBottom="@dimen/padding_size_larger"
-                android:paddingLeft="@dimen/padding_size_large"
-                android:paddingRight="@dimen/padding_size_large"
+                android:paddingLeft="@dimen/padding_size_extra_large"
+                android:paddingRight="@dimen/padding_size_extra_large"
                 android:paddingTop="@dimen/padding_size_large"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_detail_title"
@@ -60,6 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:elevation="5dp"
                 android:gravity="center"
                 android:paddingLeft="@dimen/padding_size_normal"
                 android:paddingRight="@dimen/padding_size_small"
@@ -100,6 +112,18 @@
             android:gravity="center_vertical">
 
             <ImageButton
+                android:id="@+id/button_volume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/padding_size_normal"
+                android:layout_marginRight="@dimen/padding_size_normal"
+                android:layout_toLeftOf="@+id/button_previous"
+                android:layout_toStartOf="@+id/button_previous"
+                android:background="@drawable/music_button_selector"
+                android:contentDescription="@string/button_mute_description"/>
+
+            <ImageButton
                 android:id="@+id/button_previous"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
@@ -137,8 +161,9 @@
                 android:contentDescription="@string/button_play_pause"
                 android:src="@drawable/ic_av_next"/>
 
-            <ImageButton
-                android:id="@+id/button_volume"
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/button_download"
+                style="@style/Fma.Widget.FloatingActionButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -146,8 +171,10 @@
                 android:layout_marginRight="@dimen/padding_size_normal"
                 android:layout_toEndOf="@id/button_next"
                 android:layout_toRightOf="@id/button_next"
-                android:background="@drawable/music_button_selector"
-                android:contentDescription="@string/button_mute_description"/>
+                android:clickable="true"
+                android:src="@drawable/ic_file_download"
+                app:fabSize="mini"/>
+
 
         </RelativeLayout>
 

@@ -14,7 +14,7 @@
 
     <color name="lighter_grey">#EAEAEA</color>
     <color name="lightest_grey">#EDEDED</color>
-    <color name="fma_red">#FF0000</color>
+    <color name="fma_red">#CC0000</color>
 
     <color name="background_default_dark">#424242</color>
     <color name="background_dark_medium">#616161</color>

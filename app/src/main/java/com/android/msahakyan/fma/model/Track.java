@@ -80,6 +80,9 @@ public class Track implements Item, Parcelable {
     @SerializedName("track_downloads")
     private int downloadsCount;
 
+    @SerializedName("license_url")
+    private String licenseUrl;
+
     private Bitmap imageBitmap;
 
     private String qualifier;
@@ -105,6 +108,7 @@ public class Track implements Item, Parcelable {
         genres = in.createTypedArrayList(Genre.CREATOR);
         file = in.readString();
         creationDate = in.readString();
+        licenseUrl = in.readString();
         commentsCount = in.readInt();
         favouritesCount = in.readInt();
         listensCount = in.readInt();
@@ -321,6 +325,7 @@ public class Track implements Item, Parcelable {
         dest.writeString(duration);
         dest.writeString(fileUrl);
         dest.writeString(listenUrl);
+        dest.writeString(licenseUrl);
         dest.writeTypedList(genres);
         dest.writeString(file);
         dest.writeString(creationDate);
@@ -347,5 +352,13 @@ public class Track implements Item, Parcelable {
 
     public String getQualifier() {
         return this.qualifier;
+    }
+
+    public String getLicenseUrl() {
+        return licenseUrl;
+    }
+
+    public void setLicenseUrl(String licenseUrl) {
+        this.licenseUrl = licenseUrl;
     }
 }

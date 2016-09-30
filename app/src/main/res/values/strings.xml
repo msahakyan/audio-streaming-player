@@ -37,4 +37,11 @@
     <string name="free_music_app">Free Music \nApp</string>
     <string name="button_mute_description">Mute/UnMute volume</string>
     <string name="toast_back_to_exit">Click back button again to exit the app</string>
+    <string name="no_permition_for_write_to_external_storage">Writable storage is not available</string>
+    <string name="track_save_success">Track %1$s successfully saved</string>
+    <string name="button_download">Download</string>
+    <string name="download_in_process">Downloading...</string>
+    <string name="view_license">License</string>
+    <string name="empty_license_url">License of song %1$s is empty</string>
+    <string name="file_already_exists">File %1$s already exists</string>
 </resources>
