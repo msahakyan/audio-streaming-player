@@ -6,7 +6,7 @@ Implemented a music player which reads audio stream from Free Music Archive (htt
 
 # Application description
 <p>
-User can listen a huge amount of music which is provided by genres, artists, albums all available on Free Music Archive.
+User can listen and download a huge amount of music which is provided by genres, artists, albums all available on Free Music Archive.
 </p>
 
 
