@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.android.msahakyan.fma.R;
 import com.android.msahakyan.fma.adapter.pagers.WheelAdapter;
+import com.android.msahakyan.fma.util.ZoomOutPageTransformer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -84,6 +85,7 @@ public class MainPagerFragment extends BasePagerFragment {
         mViewPager.setAdapter(mAdapter);
         mViewPager.getAdapter().notifyDataSetChanged();
 
+        mViewPager.setPageTransformer(false, new ZoomOutPageTransformer());
         mTabStrip.setVisibility(View.VISIBLE);
         mViewPager.setCurrentItem(mAdapter.getFirstPosition());
         mViewPager.addOnPageChangeListener(mPageChangedListener);
