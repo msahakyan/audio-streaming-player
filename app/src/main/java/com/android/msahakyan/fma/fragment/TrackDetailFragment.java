@@ -268,6 +268,9 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        if (!getUserVisibleHint()) {
+            return;
+        }
         super.onViewCreated(view, savedInstanceState);
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            mActivity.getWindow().setStatusBarColor(Color.parseColor(mItem.getGenres().get(0).getColor()));

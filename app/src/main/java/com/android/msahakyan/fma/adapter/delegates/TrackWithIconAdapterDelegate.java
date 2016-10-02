@@ -56,7 +56,8 @@ public class TrackWithIconAdapterDelegate extends BaseAdapterDelegate {
         viewHolder.mTitle.setText(track.getTitle());
 
         viewHolder.mTrackImage.setOnClickListener(v -> {
-            FragmentNavigationManager.obtain((MainActivity) getContext()).showTrackPlayFragment(items, position);
+//            FragmentNavigationManager.obtain((MainActivity) getContext()).showTrackPlayFragment(items, position);
+            FragmentNavigationManager.obtain((MainActivity) getContext()).showTrackDetailPagerFragment(items, position);
         });
     }
 

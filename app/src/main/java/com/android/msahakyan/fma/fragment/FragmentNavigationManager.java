@@ -96,6 +96,11 @@ public class FragmentNavigationManager implements NavigationManager {
         showFragment(MainPagerFragment.newInstance(), true, true);
     }
 
+    @Override
+    public void showTrackDetailPagerFragment(List<Item> tracks, int position) {
+        showFragment(TrackDetailPagerFragment.newInstance(new ArrayList<>(tracks), position), true, false);
+    }
+
     private void showFragment(Fragment fragment, boolean allowStateLoss, boolean clearStack) {
         FragmentManager fm = mFragmentManager;
 

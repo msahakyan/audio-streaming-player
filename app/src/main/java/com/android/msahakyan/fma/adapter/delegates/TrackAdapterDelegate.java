@@ -48,7 +48,8 @@ public class TrackAdapterDelegate extends BaseAdapterDelegate {
 
         viewHolder.mDuration.setText(track.getDuration());
         viewHolder.itemView.setOnClickListener(v -> {
-            FragmentNavigationManager.obtain((MainActivity) getContext()).showTrackPlayFragment(items, position);
+//            FragmentNavigationManager.obtain((MainActivity) getContext()).showTrackPlayFragment(items, position);
+            FragmentNavigationManager.obtain((MainActivity) getContext()).showTrackDetailPagerFragment(items, position);
         });
     }
 

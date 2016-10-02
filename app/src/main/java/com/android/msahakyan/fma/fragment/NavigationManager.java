@@ -6,7 +6,6 @@ import com.android.msahakyan.fma.adapter.delegates.AlbumAdapterDelegate;
 import com.android.msahakyan.fma.model.Album;
 import com.android.msahakyan.fma.model.Artist;
 import com.android.msahakyan.fma.model.Genre;
-import com.android.msahakyan.fma.model.Track;
 import com.android.msahakyan.fma.util.Item;
 
 import java.util.List;
@@ -34,6 +33,8 @@ public interface NavigationManager {
     void showTrackPlayFragment(List<Item> tracks, int position);
 
     void showMainPagerFragment();
+
+    void showTrackDetailPagerFragment(List<Item> tracks, int position);
 
     Fragment getCurrentFragment();
 
