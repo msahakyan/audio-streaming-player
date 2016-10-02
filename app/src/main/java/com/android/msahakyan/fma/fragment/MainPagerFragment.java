@@ -85,10 +85,10 @@ public class MainPagerFragment extends BasePagerFragment {
         mViewPager.setAdapter(mAdapter);
         mViewPager.getAdapter().notifyDataSetChanged();
 
-        mViewPager.setPageTransformer(false, new ZoomOutPageTransformer());
         mTabStrip.setVisibility(View.VISIBLE);
         mViewPager.setCurrentItem(mAdapter.getFirstPosition());
         mViewPager.addOnPageChangeListener(mPageChangedListener);
+        mViewPager.setPageTransformer(false, new ZoomOutPageTransformer());
     }
 
     @Override
