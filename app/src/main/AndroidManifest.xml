@@ -22,6 +22,15 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <data
+                    android:host="open"
+                    android:scheme="@string/scheme"/>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+            </intent-filter>
         </activity>
 
         <activity android:name=".activity.MainActivity">
@@ -42,6 +51,10 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>
             </intent-filter>
         </receiver>
+
+        <meta-data
+            android:name="io.branch.sdk.BranchKey"
+            android:value="key_live_khFbAxh8S21E3WGpPRGdMloitDa2hr8i"/>
     </application>
 
 </manifest>

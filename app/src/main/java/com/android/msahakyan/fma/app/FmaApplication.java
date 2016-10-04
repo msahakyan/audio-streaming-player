@@ -15,6 +15,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
+import io.branch.referral.Branch;
 import timber.log.Timber;
 
 /**
@@ -34,9 +35,14 @@ public class FmaApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        // Initialize Timber new plant
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
+
+        // Initialize the Branch object
+        Branch.getAutoInstance(this);
+
 
         sInstance = this;
         mNetworkComponent = DaggerNetworkComponent.builder()

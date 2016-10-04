@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Free Music</string>
+    <string name="scheme">freemusic</string>
 
     <string name="genres_fragment">Genres Fragment</string>
     <string name="search_genre">Search music with this genre</string>
@@ -44,4 +45,5 @@
     <string name="view_license">License</string>
     <string name="empty_license_url">License of song %1$s is empty</string>
     <string name="file_already_exists">File %1$s already exists</string>
+    <string name="started_from_branch_deeplink">Free Music started via branch deep link</string>
 </resources>
