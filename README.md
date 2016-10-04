@@ -4,6 +4,10 @@
 Implemented a music player which reads audio stream from Free Music Archive (http://freemusicarchive.org/).
 </p>
 
+<p>
+You can download application apk file instantly from the following link: <a href="https://github.com/msahakyan/music-player/blob/master/app/src/main/res/raw/free_music.apk">free-music.apk</a>   
+</p>
+
 # Application description
 <p>
 User can listen and download a huge amount of music which is provided by genres, artists, albums all available on Free Music Archive.
