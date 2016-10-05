@@ -1,0 +1,10 @@
+<FrameLayout style="@style/Fma.ItemList.Item"
+             xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <include layout="@layout/recycler_view"/>
+
+    <include layout="@layout/fragment_base"/>
+
+</FrameLayout>

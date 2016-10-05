@@ -12,4 +12,5 @@ public interface Endpoint {
     String GENRES = "/get/genres.json";
 
     String TRACK_DETAIL = "http://freemusicarchive.org/services/track/single/";
+    String SEARCH = "/trackSearch";
 }

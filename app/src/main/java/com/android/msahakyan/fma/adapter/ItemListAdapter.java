@@ -5,6 +5,7 @@ import android.content.Context;
 import com.android.msahakyan.fma.adapter.delegates.AlbumAdapterDelegate;
 import com.android.msahakyan.fma.adapter.delegates.ArtistAdapterDelegate;
 import com.android.msahakyan.fma.adapter.delegates.GenreAdapterDelegate;
+import com.android.msahakyan.fma.adapter.delegates.SearchResultAdapterDelegate;
 import com.android.msahakyan.fma.adapter.delegates.TrackAdapterDelegate;
 import com.android.msahakyan.fma.adapter.delegates.TrackWithIconAdapterDelegate;
 import com.android.msahakyan.fma.util.Item;
@@ -26,7 +27,8 @@ public class ItemListAdapter extends BaseListAdapter<Item> {
             new ArtistAdapterDelegate(context),
             new AlbumAdapterDelegate(context),
             new TrackAdapterDelegate(context),
-            new TrackWithIconAdapterDelegate(context)
+            new TrackWithIconAdapterDelegate(context),
+            new SearchResultAdapterDelegate(context)
         ));
     }
 }

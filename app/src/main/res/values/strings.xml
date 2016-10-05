@@ -46,4 +46,8 @@
     <string name="empty_license_url">License of song %1$s is empty</string>
     <string name="file_already_exists">File %1$s already exists</string>
     <string name="started_from_branch_deeplink">Free Music started via branch deep link</string>
+    <string name="search_title">Search</string>
+    <string name="title_toolbar">Free Music</string>
+    <string name="search_hint">Search</string>
+    <string name="artist_name_wrapper">[ %1$s ]</string>
 </resources>

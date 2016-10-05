@@ -16,6 +16,7 @@ import com.android.msahakyan.fma.adapter.delegates.AlbumAdapterDelegate;
 import com.android.msahakyan.fma.model.Album;
 import com.android.msahakyan.fma.model.Artist;
 import com.android.msahakyan.fma.model.Genre;
+import com.android.msahakyan.fma.model.SearchResultItem;
 import com.android.msahakyan.fma.transition.DetailsTransition;
 import com.android.msahakyan.fma.util.Item;
 
@@ -170,6 +171,16 @@ public class FragmentNavigationManager implements NavigationManager {
         }
 
         mActivity.pressBack();
+    }
+
+    @Override
+    public void showSearchSuggestionsFragment() {
+        showFragment(SearchSuggestionsFragment.newInstance(), true, false);
+    }
+
+    @Override
+    public void showSearchResultsFragment(List<SearchResultItem> response, String query) {
+        showFragment(SearchResultsFragment.newInstance(new ArrayList<>(response), query), true, false);
     }
 
     private void clearBackStack(FragmentManager fragmentManager) {
