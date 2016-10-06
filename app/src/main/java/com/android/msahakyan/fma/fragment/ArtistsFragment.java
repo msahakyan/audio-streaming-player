@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -71,6 +73,7 @@ public class ArtistsFragment extends BaseNetworkRequestFragment<Page<Item>> impl
                 loadMoreData();
             }
         };
+        setHasOptionsMenu(true);
     }
 
     private void setLayoutManager() {
@@ -168,73 +171,12 @@ public class ArtistsFragment extends BaseNetworkRequestFragment<Page<Item>> impl
         }
         mAdapter.addAll(result);
     }
-//    @Bind(R.id.list_view)
-//    RecyclerView mListView;
-//
-//    private ItemListAdapter mAdapter;
-//
-//    public ArtistsFragment() {
-//        // Required empty public constructor
-//    }
-//
-//    /**
-//     * Use this factory method to create a new instance of
-//     * this fragment using the provided parameters.
-//     *
-//     * @return A new instance of fragment GenresFragment.
-//     */
-//    public static ArtistsFragment newInstance() {
-//        return new ArtistsFragment();
-//    }
-//
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//    }
-//
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.fragment_artists, container, false);
-//    }
-//
-//    @Override
-//    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        setContentView(mListView);
-//        refresh();
-//    }
-//
-//    @Override
-//    protected void onSuccess(Page<Item> response, int statusCode) {
-//        super.onSuccess(response, statusCode);
-//
-//        if (statusCode == HttpURLConnection.HTTP_OK && response != null) {
-//            if (mListView != null) {
-//                init(response.getItems());
-//            }
-//        }
-//    }
-//
-//    private void init(List<Item> items) {
-//        GridLayoutManager layoutManager = new GridLayoutManager(mActivity, 2);
-//        mListView.setLayoutManager(layoutManager);
-//
-//        mAdapter = new ItemListAdapter(mActivity, items);
-//        mListView.setAdapter(mAdapter);
-//        mListView.addItemDecoration(new ItemDecorator(10, 10));
-//    }
-//
-//    @Override
-//    protected void onError(int statusCode, String errorMessage) {
-//        super.onError(statusCode, errorMessage);
-//        Toast.makeText(mActivity, "Status code: " + statusCode + " error: " + errorMessage, Toast.LENGTH_SHORT).show();
-//    }
-//
-//    @Override
-//    public void refresh() {
-//        super.refresh();
-//        setNetworkRequest(new NetworkManager().getArtists(getNetworkListener(), 1));
-//    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        if (mActivity != null) {
+            mActivity.showSearchIcon(true);
+        }
+    }
 }

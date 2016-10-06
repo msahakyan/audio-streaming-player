@@ -3,7 +3,6 @@ package com.android.msahakyan.fma.model;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.android.msahakyan.fma.util.Item;
@@ -15,7 +14,7 @@ import java.util.List;
  * Created by msahakyan on 03/07/16.
  */
 
-public class Track implements Item, Parcelable {
+public class Track implements Item {
 
     @SerializedName("track_id")
     private long id;

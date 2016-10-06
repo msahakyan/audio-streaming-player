@@ -53,6 +53,7 @@ public abstract class BaseNetworkRequestFragment<T> extends BaseLceFragment {
 
     protected void onError(int statusCode, String errorMessage) {
         Timber.w(errorMessage);
+        hideProgressView();
         showErrorView();
     }
 

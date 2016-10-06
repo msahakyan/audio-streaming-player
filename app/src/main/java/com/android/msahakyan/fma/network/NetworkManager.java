@@ -8,8 +8,10 @@ import com.android.msahakyan.fma.model.Album;
 import com.android.msahakyan.fma.model.Artist;
 import com.android.msahakyan.fma.model.Genre;
 import com.android.msahakyan.fma.model.Page;
+import com.android.msahakyan.fma.model.SearchResultItem;
 import com.android.msahakyan.fma.model.Track;
 import com.android.msahakyan.fma.network.parser.PageParser;
+import com.android.msahakyan.fma.network.parser.SearchPageParser;
 import com.android.msahakyan.fma.network.parser.TrackDetailParser;
 import com.android.msahakyan.fma.util.Constants;
 import com.android.msahakyan.fma.util.Item;
@@ -17,6 +19,7 @@ import com.android.volley.Request;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -200,5 +203,13 @@ public class NetworkManager {
         }.getType();
 
         return mNetworkChannel.requestGet(Endpoint.TRACKS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+    }
+
+    public CancelableRequest loadSearchResultsByQuery(@NonNull NetworkRequestListener<List<SearchResultItem>> requestListener, String query) {
+        ArrayMap<String, String> params = new ArrayMap<>(2);
+        params.put("q", String.valueOf(query));
+        params.put("limit", String.valueOf(1000));
+
+        return mNetworkChannel.requestGet(Endpoint.SEARCH, requestListener, new SearchPageParser(), params, Request.Priority.NORMAL);
     }
 }

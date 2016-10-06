@@ -11,6 +11,7 @@
     <dimen name="detail_image_height">250dp</dimen>
     <dimen name="album_image_height">150dp</dimen>
     <dimen name="text_size_title">13sp</dimen>
+    <dimen name="text_size_larger">14sp</dimen>
     <dimen name="text_size_pts">16sp</dimen>
     <dimen name="text_size_splash">40sp</dimen>
     <dimen name="text_size_normal">12sp</dimen>
@@ -32,4 +33,6 @@
     <dimen name="padding_size_large">15dp</dimen>
     <dimen name="text_size_detail_title">20sp</dimen>
     <dimen name="padding_size_extra_large">50dp</dimen>
+    <dimen name="border_size">1dp</dimen>
+    <dimen name="icon_size_remove">40dp</dimen>
 </resources>

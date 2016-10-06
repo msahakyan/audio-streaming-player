@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/margin_size_extra_small"
+    android:layout_marginTop="@dimen/margin_size_extra_small"
+    android:background="@drawable/rectangular_selector"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/padding_size_extra_small">
+
+    <ImageView
+        android:id="@+id/icon_track"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="@dimen/margin_size_extra_small"
+        android:layout_marginLeft="@dimen/margin_size_normal"
+        android:layout_marginRight="@dimen/margin_size_normal"
+        android:layout_marginTop="@dimen/margin_size_small"
+        android:src="@drawable/icon_track"/>
+
+    <TextView
+        android:id="@+id/track_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/icon_track"
+        android:layout_toRightOf="@id/icon_track"
+        android:ellipsize="end"
+        android:gravity="center_vertical|start"
+        android:lines="1"
+        android:paddingBottom="@dimen/padding_size_extra_small"
+        android:paddingLeft="@dimen/padding_size_normal"
+        android:paddingRight="@dimen/padding_size_normal"
+        android:paddingTop="@dimen/padding_size_small"
+        android:textAllCaps="false"
+        android:textSize="@dimen/text_size_larger"
+        android:textStyle="bold"
+        android:typeface="serif"/>
+
+    <TextView
+        android:id="@+id/track_artist_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/track_title"
+        android:layout_toEndOf="@id/icon_track"
+        android:layout_toRightOf="@id/icon_track"
+        android:ellipsize="end"
+        android:gravity="center_vertical|start"
+        android:lines="1"
+        android:paddingLeft="@dimen/padding_size_normal"
+        android:paddingRight="@dimen/padding_size_normal"
+        android:textAllCaps="false"
+        android:textSize="@dimen/text_size_normal"
+        android:typeface="serif"/>
+
+    <View style="@style/ListItemDivider"/>
+
+</RelativeLayout>

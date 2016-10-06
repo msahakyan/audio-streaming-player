@@ -25,6 +25,7 @@ public abstract class BaseAdapterDelegate implements AdapterDelegate<List<Item>>
     static final int TYPE_ARTIST = 3;
     static final int TYPE_TRACK = 4;
     static final int TYPE_TRACK_WITH_ICON = 5;
+    static final int TYPE_SEARCH_RESULT = 6;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TYPE_GENRE,
@@ -32,7 +33,8 @@ public abstract class BaseAdapterDelegate implements AdapterDelegate<List<Item>>
         TYPE_ALBUM,
         TYPE_ARTIST,
         TYPE_TRACK,
-        TYPE_TRACK_WITH_ICON})
+        TYPE_TRACK_WITH_ICON,
+        TYPE_SEARCH_RESULT})
     public @interface ElementViewType {
     }
 

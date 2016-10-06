@@ -13,7 +13,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.ActionBar.Transparent">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".activity.SplashScreenActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
@@ -33,7 +33,19 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.MainActivity">
+        <activity
+            android:name=".activity.MainActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme">
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+
         </activity>
 
         <service android:name="com.android.msahakyan.fma.service.MusicService"/>
@@ -54,7 +66,7 @@
 
         <meta-data
             android:name="io.branch.sdk.BranchKey"
-            android:value="key_live_khFbAxh8S21E3WGpPRGdMloitDa2hr8i"/>
+            android:value="key_test_jfChqse6U06AW5NbVSQxKhgoErg6nt5w"/>
     </application>
 
 </manifest>
