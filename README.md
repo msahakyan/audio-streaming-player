@@ -1,7 +1,7 @@
-# free-music-player
+# audio-streaming-player
 
 <p>
-Implemented a music player which reads audio stream from Free Music Archive (http://freemusicarchive.org/).
+Free and open-source streaming audio player for Android phones.
 </p>
 
 <p>
@@ -10,7 +10,8 @@ You can download application apk file instantly from the following link: <a href
 
 # Application description
 <p>
-User can listen and download a huge amount of music which is provided by genres, artists, albums all available on Free Music Archive.
+Free Music is a streaming application for Android that lets you listen and download instantly to more than 100 thousand songs with integrated search functionality all available in `Free Music Archive` web site (http://freemusicarchive.org/).  
+It requires <b>no sign up</b>, displays <b>no ads</b> and is <b>100% free and safe</b>.
 </p>
 
 
@@ -40,3 +41,17 @@ User can listen and download a huge amount of music which is provided by genres,
 `ongoing notification`<br/>
 <img src="https://github.com/msahakyan/music-player/blob/master/app/src/main/res/raw/ongoing_notification_framed.png" width="240px" height="426px" style="margin: 30px;" alt="integrated youtube player"></img>
 
+
+# Used libraries
+<ul>
+  <li><b>com.android.volley:volley:1.0.0</b> <i>Networking library (+ image caching)</i>
+  <li><b>com.google.dagger:dagger:2.0</b> <i>Dependency injection library</i>
+  <li><b>com.jakewharton.timber:timber:3.0.1</b> <i>Logging library (Square)</i>
+  <li><b>com.jakewharton:butterknife:7.0.1</b> <i>View injection library (Square)</i>
+  <li><b>com.google.code.gson:gson:2.7</b> <i>Serializing/Deserializing library</i>
+  <li><b>net.orfjackal.retrolambda:retrolambda:2.3.0</b> <i>java 8 lambda support library</i>
+  <li><b>com.github.rahatarmanahmed:circularprogressview:2.5.0</b> <i>Circular progress view library</i>
+  <li> <b>com.github.traex.rippleeffect:library:1.3</b> <i>Ripple effect for pre lollipop devices</i>
+  <li> <b>com.squareup.okhttp3:okhttp:3.4.1</b> <i>Networking library (Square)</i>
+  <li> <b>io.branch.sdk.android:library:2.+</b> <i>Deep linking library</i>  
+</ul>
