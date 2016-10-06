@@ -18,10 +18,10 @@ It requires <b>no sign up</b>, displays <b>no ads</b> and is <b>100% free and sa
 # Screenshots from free-music-app
 
 `albums page`<br/>
-<img src="https://github.com/msahakyan/music-player/blob/master/app/src/main/res/raw/albums_framed.png" width="240px" height="426px" style="float: left; display:inline; margin: 30px;" alt="main feed page"></img>
+<img src="https://github.com/msahakyan/music-player/blob/master/app/src/main/res/raw/albums_fragment_framed.png" width="240px" height="426px" style="float: left; display:inline; margin: 30px;" alt="main feed page"></img>
 
 `artists page`<br/>
-<img src="https://github.com/msahakyan/music-player/blob/master/app/src/main/res/raw/artists_framed.png" width="240px" height="426px" style="margin: 30px;" alt="main feed page with loaded similar movies"></img>
+<img src="https://github.com/msahakyan/music-player/blob/master/app/src/main/res/raw/artists_fragment_framed.png" width="240px" height="426px" style="margin: 30px;" alt="main feed page with loaded similar movies"></img>
 
 `genres page`<br/>
 <img src="https://github.com/msahakyan/music-player/blob/master/app/src/main/res/raw/genres_framed.png" width="240px" height="426px" style="float: left; display:inline; margin: 30px;"  alt="detail page view"></img>
@@ -38,8 +38,14 @@ It requires <b>no sign up</b>, displays <b>no ads</b> and is <b>100% free and sa
 `artist detail page`<br/>
 <img src="https://github.com/msahakyan/music-player/blob/master/app/src/main/res/raw/artist_details_framed.png" width="240px" height="426px" style="margin: 30px;" alt="integrated youtube player"></img>
 
-`ongoing notification`<br/>
+`notification control view`<br/>
 <img src="https://github.com/msahakyan/music-player/blob/master/app/src/main/res/raw/ongoing_notification_framed.png" width="240px" height="426px" style="margin: 30px;" alt="integrated youtube player"></img>
+
+`search history page`<br/>
+<img src="https://github.com/msahakyan/music-player/blob/master/app/src/main/res/raw/search_history_framed.png" width="240px" height="426px" style="margin: 30px;" alt="integrated youtube player"></img>
+
+`search results page`<br/>
+<img src="https://github.com/msahakyan/music-player/blob/master/app/src/main/res/raw/search_results_framed.png" width="240px" height="426px" style="margin: 30px;" alt="integrated youtube player"></img>
 
 
 # Used libraries
