@@ -13,9 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.msahakyan.fma.R;
+import com.android.msahakyan.fma.adapter.ItemClickListener;
 import com.android.msahakyan.fma.adapter.ItemListAdapter;
+import com.android.msahakyan.fma.application.FmaApplication;
+import com.android.msahakyan.fma.model.Artist;
 import com.android.msahakyan.fma.model.Page;
-import com.android.msahakyan.fma.network.NetworkManager;
+import com.android.msahakyan.fma.network.FmaApiService;
 import com.android.msahakyan.fma.network.NetworkRequestListener;
 import com.android.msahakyan.fma.util.InfiniteScrollListener;
 import com.android.msahakyan.fma.util.Item;
@@ -25,6 +28,8 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import timber.log.Timber;
 
@@ -33,9 +38,13 @@ import timber.log.Timber;
  * Use the {@link ArtistsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ArtistsFragment extends BaseNetworkRequestFragment<Page<Item>> implements MoreDataLoaderView.LoadMoreDataCallback {
+public class ArtistsFragment extends BaseNetworkRequestFragment<Page<Item>> implements
+    MoreDataLoaderView.LoadMoreDataCallback, ItemClickListener<Item> {
 
     private static final int DEFAULT_THRESHOLD = 1;
+
+    @Inject
+    FmaApiService fmaApiService;
 
     @Bind(R.id.list_view)
     RecyclerView mListView;
@@ -56,7 +65,6 @@ public class ArtistsFragment extends BaseNetworkRequestFragment<Page<Item>> impl
      *
      * @return A new instance of fragment GenresFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static ArtistsFragment newInstance() {
         return new ArtistsFragment();
     }
@@ -77,7 +85,7 @@ public class ArtistsFragment extends BaseNetworkRequestFragment<Page<Item>> impl
     }
 
     private void setLayoutManager() {
-        GridLayoutManager layoutManager = new GridLayoutManager(mActivity, 2);
+        GridLayoutManager layoutManager = new GridLayoutManager(activity, 2);
         mListView.setLayoutManager(layoutManager);
         mInfiniteScrollListener.setLayoutManager(layoutManager);
 
@@ -87,7 +95,7 @@ public class ArtistsFragment extends BaseNetworkRequestFragment<Page<Item>> impl
 
     private void createAdapter() {
         mPage = 1;
-        mAdapter = new ItemListAdapter(mActivity, new ArrayList<>());
+        mAdapter = new ItemListAdapter(activity, new ArrayList<>(), this);
     }
 
     @Override
@@ -102,6 +110,12 @@ public class ArtistsFragment extends BaseNetworkRequestFragment<Page<Item>> impl
         super.onViewCreated(view, savedInstanceState);
         setContentView(mListView);
         setLayoutManager();
+        mLoadingFooter.setLoadDataCallback(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         if (getView() != null && mAdapter != null) {
             if (mAdapter.getItems().isEmpty()) {
                 showProgressView();
@@ -111,7 +125,6 @@ public class ArtistsFragment extends BaseNetworkRequestFragment<Page<Item>> impl
                 Timber.d("Items already loaded -- skip");
             }
         }
-        mLoadingFooter.setLoadDataCallback(this);
     }
 
     @Override
@@ -135,18 +148,18 @@ public class ArtistsFragment extends BaseNetworkRequestFragment<Page<Item>> impl
     protected void onError(int statusCode, String errorMessage) {
         super.onError(statusCode, errorMessage);
         hideProgressView();
-        Toast.makeText(mActivity, "Status code: " + statusCode + " error: " + errorMessage, Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, "Status code: " + statusCode + " error: " + errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void refresh() {
         super.refresh();
-        setNetworkRequest(new NetworkManager().getArtists(getNetworkListener(), mPage));
+        setNetworkRequest(fmaApiService.getArtists(getNetworkListener(), mPage));
     }
 
     @Override
     public void loadMoreData() {
-        new NetworkManager().getArtists(new NetworkRequestListener<Page<Item>>() {
+        fmaApiService.getArtists(new NetworkRequestListener<Page<Item>>() {
             @Override
             public void onSuccess(@Nullable Page<Item> response, int statusCode) {
                 if (statusCode == HttpURLConnection.HTTP_OK && response != null) {
@@ -175,8 +188,19 @@ public class ArtistsFragment extends BaseNetworkRequestFragment<Page<Item>> impl
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if (mActivity != null) {
-            mActivity.showSearchIcon(true);
+        if (activity != null) {
+            activity.showSearchIcon(true);
         }
+    }
+
+    @Override
+    public void onItemClicked(Item item, RecyclerView.ViewHolder holder) {
+        navigationManager.showArtistDetailFragment((Artist) item);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        FmaApplication.get(activity).getApplicationComponent().inject(this);
     }
 }

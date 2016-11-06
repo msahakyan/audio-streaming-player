@@ -8,8 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.msahakyan.fma.R;
-import com.android.msahakyan.fma.activity.MainActivity;
-import com.android.msahakyan.fma.fragment.FragmentNavigationManager;
+import com.android.msahakyan.fma.adapter.ItemClickListener;
 import com.android.msahakyan.fma.model.Genre;
 import com.android.msahakyan.fma.util.Item;
 
@@ -24,12 +23,11 @@ import butterknife.ButterKnife;
 
 public class GenreAdapterDelegate extends BaseAdapterDelegate {
 
-    public GenreAdapterDelegate(Context ctx) {
-        super(ctx, TYPE_GENRE);
-    }
+    private ItemClickListener<Item> listener;
 
-    public GenreAdapterDelegate(Context ctx, @ElementViewType int viewType) {
-        super(ctx, viewType);
+    public GenreAdapterDelegate(Context ctx, ItemClickListener<Item> listener) {
+        super(ctx, TYPE_GENRE);
+        this.listener = listener;
     }
 
     @NonNull
@@ -43,8 +41,11 @@ public class GenreAdapterDelegate extends BaseAdapterDelegate {
         Genre genre = (Genre) items.get(position);
         GenreViewHolder viewHolder = (GenreViewHolder) holder;
         viewHolder.mTitle.setText(genre.getTitle());
-        viewHolder.mTitle.setOnClickListener(v ->
-            FragmentNavigationManager.obtain((MainActivity) getContext()).showTracksFragmentByGenre(genre));
+        viewHolder.mTitle.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClicked(genre, null);
+            }
+        });
     }
 
     @Override

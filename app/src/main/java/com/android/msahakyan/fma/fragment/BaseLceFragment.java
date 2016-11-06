@@ -43,10 +43,10 @@ public class BaseLceFragment extends BaseFragment {
 
     @OnClick(R.id.error_view)
     protected void onClickError(View view) {
-        if (ConnectivityUtil.isConnectedToNetwork(mActivity)) {
+        if (ConnectivityUtil.isConnectedToNetwork(activity)) {
             refresh();
         } else {
-            ConnectivityUtil.notifyNoConnection(mActivity);
+            ConnectivityUtil.notifyNoConnection(activity);
         }
     }
 
@@ -61,7 +61,7 @@ public class BaseLceFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initEmptyView(mActivity.getString(R.string.no_data), null);
+        initEmptyView(activity.getString(R.string.no_data), null);
     }
 
     protected void initEmptyView(String text, View.OnClickListener onClickListener) {

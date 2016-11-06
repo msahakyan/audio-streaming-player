@@ -1,6 +1,6 @@
 package com.android.msahakyan.fma.network.parser;
 
-import com.android.msahakyan.fma.network.INetworkChannel;
+import com.android.msahakyan.fma.network.INetworkUtils;
 import com.android.msahakyan.fma.util.Item;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
  * Created by msahakyan on 25/07/16.
  */
 
-public class TrackDetailParser<T extends Item> implements INetworkChannel.NetworkResponseParser<T> {
+public class TrackDetailParser<T extends Item> implements INetworkUtils.NetworkResponseParser<T> {
 
     private final Gson mGson = new Gson();
 

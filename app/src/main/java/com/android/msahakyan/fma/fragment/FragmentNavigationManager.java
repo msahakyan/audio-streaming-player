@@ -5,6 +5,7 @@ import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.transition.Fade;
 import android.view.View;
 import android.widget.Toast;
@@ -33,23 +34,18 @@ public class FragmentNavigationManager implements NavigationManager {
 
     private static final int LEAVE_APP_INTERVAL = 2000;
 
-    private static FragmentNavigationManager sInstance;
+    private MainActivity activity;
+    private FragmentManager fragmentManager;
 
-    private FragmentManager mFragmentManager;
-    private MainActivity mActivity;
     private long mLastBackPressed;
 
-    public static FragmentNavigationManager obtain(MainActivity activity) {
-        if (sInstance == null) {
-            sInstance = new FragmentNavigationManager();
+    public FragmentNavigationManager(AppCompatActivity activity) {
+        if (activity instanceof MainActivity) {
+            this.activity = (MainActivity) activity;
+            this.fragmentManager = this.activity.getSupportFragmentManager();
+        } else {
+            throw new IllegalArgumentException("Navigation Manager instance can be obtained only from MainActivity instance!!");
         }
-        sInstance.configure(activity);
-        return sInstance;
-    }
-
-    private void configure(MainActivity activity) {
-        mActivity = activity;
-        mFragmentManager = mActivity.getSupportFragmentManager();
     }
 
     @Override
@@ -84,7 +80,7 @@ public class FragmentNavigationManager implements NavigationManager {
 
     @Override
     public void showAlbumDetailFragment(Album album, AlbumAdapterDelegate.AlbumViewHolder holder) {
-        showFragmentWithTransition(AlbumDetailFragment.newInstance(album), holder.mImageView, "albumImage", true, false);
+        showFragmentWithTransition(AlbumDetailFragment.newInstance(album), holder.imageView, "albumImage", true, false);
     }
 
     @Override
@@ -98,7 +94,7 @@ public class FragmentNavigationManager implements NavigationManager {
     }
 
     private void showFragment(Fragment fragment, boolean allowStateLoss, boolean clearStack) {
-        FragmentManager fm = mFragmentManager;
+        FragmentManager fm = fragmentManager;
 
         if (clearStack) {
             clearBackStack(fm);
@@ -120,7 +116,7 @@ public class FragmentNavigationManager implements NavigationManager {
     }
 
     private void showFragmentWithTransition(Fragment fragment, View sharedView, String transitionName, boolean allowStateLoss, boolean clearStack) {
-        FragmentManager fm = mFragmentManager;
+        FragmentManager fm = fragmentManager;
 
         if (clearStack) {
             clearBackStack(fm);
@@ -151,26 +147,26 @@ public class FragmentNavigationManager implements NavigationManager {
 
     @Override
     public Fragment getCurrentFragment() {
-        return mFragmentManager.findFragmentById(R.id.container);
+        return fragmentManager.findFragmentById(R.id.container);
     }
 
     @Override
     public void onBackPress() {
-        int backStackSize = mFragmentManager.getBackStackEntryCount();
+        int backStackSize = fragmentManager.getBackStackEntryCount();
 
         // If there is only one fragment left, then show toast for exit
         if (backStackSize <= 1) {
             long currentTime = System.currentTimeMillis();
             if (mLastBackPressed + LEAVE_APP_INTERVAL > currentTime) {
-                mActivity.finish();
+                activity.finish();
             } else {
-                Toast.makeText(mActivity, R.string.toast_back_to_exit, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, R.string.toast_back_to_exit, Toast.LENGTH_SHORT).show();
                 mLastBackPressed = currentTime;
             }
             return;
         }
 
-        mActivity.pressBack();
+        activity.pressBack();
     }
 
     @Override

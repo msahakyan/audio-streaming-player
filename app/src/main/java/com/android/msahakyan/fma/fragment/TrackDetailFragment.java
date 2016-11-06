@@ -15,7 +15,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,9 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.msahakyan.fma.R;
-import com.android.msahakyan.fma.app.FmaApplication;
+import com.android.msahakyan.fma.application.FmaApplication;
 import com.android.msahakyan.fma.model.Track;
-import com.android.msahakyan.fma.network.NetworkManager;
+import com.android.msahakyan.fma.network.FmaApiService;
 import com.android.msahakyan.fma.network.NetworkRequestListener;
 import com.android.msahakyan.fma.service.MusicDownloaderService;
 import com.android.msahakyan.fma.service.MusicService;
@@ -48,6 +48,8 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.OnClick;
 import timber.log.Timber;
@@ -62,6 +64,11 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
 
     private static final String KEY_ITEM_LIST = "KEY_ITEM_LIST";
     private static final String KEY_ITEM_POSITION = "KEY_ITEM_POSITION";
+
+    @Inject
+    FmaApiService fmaApiService;
+    @Inject
+    ImageLoader imageLoader;
 
     @Bind(R.id.track_image)
     ImageView mTrackImageView;
@@ -140,7 +147,7 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
                     Timber.d("Received response for track details: " + response);
                     setItem((Track) response);
                     showBasicView();
-                    onItemLoaded(mItem);
+                    onItemLoaded(item);
                 }
             }
 
@@ -155,15 +162,15 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
     @Override
     protected void showBasicView() {
         showContentView();
-        mTitleView.setText(mItem.getTitle());
-        FmaApplication.getInstance().getImageLoader().get(mItem.getImage(), new ImageLoader.ImageListener() {
+        mTitleView.setText(item.getTitle());
+        imageLoader.get(item.getImage(), new ImageLoader.ImageListener() {
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                 if (response != null) {
                     Bitmap btm = response.getBitmap();
                     if (btm != null && mTrackImageView != null) {
                         mTrackImageView.setImageBitmap(btm);
-                        mItem.setImageBitmap(btm);
+                        item.setImageBitmap(btm);
                         BitmapWorkerTask task = new BitmapWorkerTask(mTrackImageContainer);
                         task.execute(btm);
                     }
@@ -172,7 +179,7 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Timber.w("Can't load image bitmap url: " + mItem.getImage());
+                Timber.w("Can't load image bitmap url: " + item.getImage());
             }
         });
     }
@@ -195,7 +202,7 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
 
     @Override
     public void onDestroy() {
-        mActivity.unbindService(mServiceConnection);
+        activity.unbindService(mServiceConnection);
         mMusicService = null;
         super.onDestroy();
     }
@@ -247,15 +254,19 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
     public void onStart() {
         super.onStart();
         if (mPlayIntent == null) {
-            mPlayIntent = new Intent(mActivity, MusicService.class);
-            mActivity.bindService(mPlayIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+            mPlayIntent = new Intent(activity, MusicService.class);
+            activity.bindService(mPlayIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
         }
     }
 
     @Override
     public void onActivityCreated(@android.support.annotation.Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+        ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+        FmaApplication.get(activity).getApplicationComponent().inject(this);
     }
 
 
@@ -269,9 +280,6 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            mActivity.getWindow().setStatusBarColor(Color.parseColor(mItem.getGenres().get(0).getColor()));
-//        }
         showContentView();
         init();
     }
@@ -279,7 +287,7 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
     @Override
     public void refresh() {
         super.refresh();
-        new NetworkManager().getTrackById(mNetworkRequestListener, mItem.getId());
+        fmaApiService.getTrackById(mNetworkRequestListener, item.getId());
     }
 
     private void init() {
@@ -288,7 +296,7 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
         mProgress.setPadding(0, 0, 0, 0);
         mProgress.setProgressDrawable(ContextCompat.getDrawable(getContext(), R.drawable.progress_bar));
         mProgress.setOnTouchListener(this);
-        mSongTime.setText(mItem.getDuration());
+        mSongTime.setText(item.getDuration());
         updatePlayerPreviousNextButtonsUI();
     }
 
@@ -331,21 +339,21 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
 
     @OnClick(R.id.button_download)
     public void onDownloadButtonClick() {
-        Intent intent = new Intent(mActivity, MusicDownloaderService.class);
-        intent.putExtra(MusicDownloaderService.KEY_TRACK_URL, mItem.getFileUrl());
-        intent.putExtra(MusicDownloaderService.KEY_TRACK_NAME, mItem.getTitle());
-        mActivity.startService(intent);
+        Intent intent = new Intent(activity, MusicDownloaderService.class);
+        intent.putExtra(MusicDownloaderService.KEY_TRACK_URL, item.getFileUrl());
+        intent.putExtra(MusicDownloaderService.KEY_TRACK_NAME, item.getTitle());
+        activity.startService(intent);
     }
 
     @OnClick(R.id.license)
     public void onLicenseViewClick() {
-        if (mItem.getLicenseUrl() == null) {
-            String trackTitle = mItem.getTitle();
+        if (item.getLicenseUrl() == null) {
+            String trackTitle = item.getTitle();
             Timber.e(getString(R.string.empty_license_url, trackTitle));
-            Toast.makeText(mActivity, getString(R.string.empty_license_url, trackTitle), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.empty_license_url, trackTitle), Toast.LENGTH_SHORT).show();
             return;
         }
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse((mItem.getLicenseUrl())));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse((item.getLicenseUrl())));
         startActivity(browserIntent);
     }
 
@@ -369,7 +377,7 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
     @OnClick(R.id.button_next)
     public void onNextButtonClick() {
         if (!hasNext()) {
-            Toast.makeText(mActivity, getString(R.string.no_more_tracks_to_load, mItem.getAlbumTitle()), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.no_more_tracks_to_load, item.getAlbumTitle()), Toast.LENGTH_SHORT).show();
             return;
         }
         if (mTracks != null) {
@@ -410,7 +418,7 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
     }
 
     private void mute(boolean mute) {
-        AudioManager audioManager = (AudioManager) mActivity.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager audioManager = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!audioManager.isStreamMute(AudioManager.STREAM_MUSIC)) {
@@ -424,7 +432,7 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
     @Override
     public void onItemLoaded(Item item) {
         Track track = (Track) item;
-        track.setImageBitmap(mItem.getImageBitmap());
+        track.setImageBitmap(this.item.getImageBitmap());
         mMusicService.setTrack(track);
         mMusicService.playTrack();
         mSongTime.setText(track.getDuration());
@@ -482,16 +490,14 @@ public class TrackDetailFragment extends BaseItemDetailFragment<Track> implement
     @Override
     public void onBeforeDestroyView() {
         super.onBeforeDestroyView();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+        }
         mute(false); // un-mute audio stream
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            Window window = mActivity.getWindow();
-//            window.setStatusBarColor(ContextCompat.getColor(mActivity, R.color.colorPrimaryDark));
-//        }
     }
 
-    class BitmapWorkerTask extends AsyncTask<Bitmap, Void, Bitmap> {
+    static class BitmapWorkerTask extends AsyncTask<Bitmap, Void, Bitmap> {
 
         private final WeakReference<ImageView> imageViewReference;
         private Bitmap source;

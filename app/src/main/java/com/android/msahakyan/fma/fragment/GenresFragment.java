@@ -10,10 +10,13 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.msahakyan.fma.R;
+import com.android.msahakyan.fma.adapter.ItemClickListener;
 import com.android.msahakyan.fma.adapter.ItemListAdapter;
+import com.android.msahakyan.fma.application.FmaApplication;
+import com.android.msahakyan.fma.model.Genre;
 import com.android.msahakyan.fma.model.Page;
+import com.android.msahakyan.fma.network.FmaApiService;
 import com.android.msahakyan.fma.network.NetworkRequestListener;
-import com.android.msahakyan.fma.network.NetworkManager;
 import com.android.msahakyan.fma.util.InfiniteScrollListener;
 import com.android.msahakyan.fma.util.Item;
 import com.android.msahakyan.fma.view.MoreDataLoaderView;
@@ -23,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import timber.log.Timber;
 
@@ -30,9 +35,13 @@ import timber.log.Timber;
  * Use the {@link GenresFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GenresFragment extends BaseNetworkRequestFragment<Page<Item>> implements MoreDataLoaderView.LoadMoreDataCallback {
+public class GenresFragment extends BaseNetworkRequestFragment<Page<Item>> implements
+    MoreDataLoaderView.LoadMoreDataCallback, ItemClickListener<Item> {
 
     private static final int THRESHOLD = 1;
+
+    @Inject
+    FmaApiService fmaApiService;
 
     @Bind(R.id.list_view)
     RecyclerView mListView;
@@ -54,7 +63,6 @@ public class GenresFragment extends BaseNetworkRequestFragment<Page<Item>> imple
      *
      * @return A new instance of fragment GenresFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static GenresFragment newInstance() {
         return new GenresFragment();
     }
@@ -73,7 +81,7 @@ public class GenresFragment extends BaseNetworkRequestFragment<Page<Item>> imple
     }
 
     private void setLayoutManager() {
-        GridLayoutManager layoutManager = new GridLayoutManager(mActivity, 1);
+        GridLayoutManager layoutManager = new GridLayoutManager(activity, 1);
         mListView.setLayoutManager(layoutManager);
         mInfiniteScrollListener.setLayoutManager(layoutManager);
 
@@ -83,7 +91,7 @@ public class GenresFragment extends BaseNetworkRequestFragment<Page<Item>> imple
 
     private void createAdapter() {
         mPage = 1;
-        mAdapter = new ItemListAdapter(mActivity, new ArrayList<>());
+        mAdapter = new ItemListAdapter(activity, new ArrayList<>(), this);
     }
 
     @Override
@@ -98,6 +106,12 @@ public class GenresFragment extends BaseNetworkRequestFragment<Page<Item>> imple
         super.onViewCreated(view, savedInstanceState);
         setContentView(mListView);
         setLayoutManager();
+        mLoadingFooter.setLoadDataCallback(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         if (getView() != null && mAdapter != null) {
             if (mAdapter.getItems().isEmpty()) {
                 showProgressView();
@@ -107,7 +121,6 @@ public class GenresFragment extends BaseNetworkRequestFragment<Page<Item>> imple
                 Timber.d("Items already loaded -- skip");
             }
         }
-        mLoadingFooter.setLoadDataCallback(this);
     }
 
     @Override
@@ -133,20 +146,20 @@ public class GenresFragment extends BaseNetworkRequestFragment<Page<Item>> imple
     protected void onError(int statusCode, String errorMessage) {
         super.onError(statusCode, errorMessage);
         hideProgressView();
-        Toast.makeText(mActivity, "Status code: " + statusCode + " error: " + errorMessage, Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, "Status code: " + statusCode + " error: " + errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void refresh() {
         super.refresh();
-        setNetworkRequest(new NetworkManager().getGenres(getNetworkListener(), mPage));
+        setNetworkRequest(fmaApiService.getGenres(getNetworkListener(), mPage));
     }
 
     @Override
     public void loadMoreData() {
         if (mCanLoadMore) {
             mLoadingFooter.setLoadingShown(isResumed() && mAdapter.getItemCount() > 0);
-            new NetworkManager().getGenres(new NetworkRequestListener<Page<Item>>() {
+            fmaApiService.getGenres(new NetworkRequestListener<Page<Item>>() {
                 @Override
                 public void onSuccess(@Nullable Page<Item> response, int statusCode) {
                     if (statusCode == HttpURLConnection.HTTP_OK && response != null) {
@@ -179,5 +192,16 @@ public class GenresFragment extends BaseNetworkRequestFragment<Page<Item>> imple
         List<Item> items = mAdapter.getItems();
         Collections.sort(items);
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onItemClicked(Item item, RecyclerView.ViewHolder holder) {
+        navigationManager.showTracksFragmentByGenre((Genre) item);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        FmaApplication.get(activity).getApplicationComponent().inject(this);
     }
 }

@@ -4,12 +4,17 @@ import android.content.Context;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
+import com.android.msahakyan.fma.application.FmaApplication;
+import com.android.msahakyan.fma.network.FmaApiService;
 import com.android.msahakyan.fma.util.AppUtils;
 import com.android.msahakyan.fma.util.Item;
+import com.android.volley.toolbox.ImageLoader;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by msahakyan on 31/07/16.
@@ -35,15 +40,21 @@ public abstract class BaseAdapterDelegate implements AdapterDelegate<List<Item>>
         TYPE_TRACK,
         TYPE_TRACK_WITH_ICON,
         TYPE_SEARCH_RESULT})
-    public @interface ElementViewType {
+    @interface ElementViewType {
     }
 
-    private int mViewType;
-    private Context mContext;
+    @Inject
+    protected FmaApiService fmaApiService;
+    @Inject
+    protected ImageLoader imageLoader;
 
-    BaseAdapterDelegate(Context ctx, @ElementViewType int viewType) {
-        mContext = ctx;
+    private int mViewType;
+    private Context context;
+
+    BaseAdapterDelegate(Context context, @ElementViewType int viewType) {
+        this.context = context;
         mViewType = viewType;
+        FmaApplication.get(this.context).getApplicationComponent().inject(this);
     }
 
     @Override
@@ -63,6 +74,6 @@ public abstract class BaseAdapterDelegate implements AdapterDelegate<List<Item>>
     }
 
     protected Context getContext() {
-        return mContext;
+        return context;
     }
 }

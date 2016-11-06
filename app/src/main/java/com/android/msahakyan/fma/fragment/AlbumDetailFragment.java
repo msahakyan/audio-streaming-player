@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -16,19 +16,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.msahakyan.fma.R;
+import com.android.msahakyan.fma.adapter.ItemClickListener;
 import com.android.msahakyan.fma.adapter.ItemListAdapter;
-import com.android.msahakyan.fma.app.FmaApplication;
+import com.android.msahakyan.fma.application.FmaApplication;
 import com.android.msahakyan.fma.model.Album;
 import com.android.msahakyan.fma.model.Artist;
 import com.android.msahakyan.fma.model.Page;
-import com.android.msahakyan.fma.network.NetworkManager;
+import com.android.msahakyan.fma.network.FmaApiService;
 import com.android.msahakyan.fma.network.NetworkRequestListener;
 import com.android.msahakyan.fma.util.AppUtils;
 import com.android.msahakyan.fma.util.Item;
 import com.android.msahakyan.fma.view.FadeInNetworkImageView;
+import com.android.volley.toolbox.ImageLoader;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -39,7 +43,12 @@ import timber.log.Timber;
  * Use the {@link AlbumDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AlbumDetailFragment extends BaseItemDetailFragment<Album> {
+public class AlbumDetailFragment extends BaseItemDetailFragment<Album> implements ItemClickListener<Item> {
+
+    @Inject
+    FmaApiService fmaApiService;
+    @Inject
+    ImageLoader imageLoader;
 
     @Bind(R.id.list_view)
     RecyclerView mListView;
@@ -58,7 +67,7 @@ public class AlbumDetailFragment extends BaseItemDetailFragment<Album> {
 
 
     private NetworkRequestListener<Page<Item>> mNetworkRequestListener;
-    private ItemListAdapter mAdapter;
+    private ItemListAdapter adapter;
     private int mPage;
     private Artist mArtist;
 
@@ -105,21 +114,21 @@ public class AlbumDetailFragment extends BaseItemDetailFragment<Album> {
     }
 
     private void showExtrasView(Page<Item> response) {
-        if (mAdapter != null) {
-            mAdapter.clear();
-            mAdapter.addAll(response.getItems());
+        if (adapter != null) {
+            adapter.clear();
+            adapter.addAll(response.getItems());
         }
     }
 
     private void setLayoutManager() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(activity);
         mListView.setLayoutManager(layoutManager);
-        mListView.setAdapter(mAdapter);
+        mListView.setAdapter(adapter);
     }
 
     private void createTracksAdapter() {
         mPage = 1;
-        mAdapter = new ItemListAdapter(mActivity, new ArrayList<>());
+        adapter = new ItemListAdapter(activity, new ArrayList<>(), this);
     }
 
     @Override
@@ -134,11 +143,16 @@ public class AlbumDetailFragment extends BaseItemDetailFragment<Album> {
         super.onViewCreated(view, savedInstanceState);
         showContentView();
         setLayoutManager();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         loadArtistInfo();
     }
 
     private void loadArtistInfo() {
-        new NetworkManager().getArtistByName(new NetworkRequestListener<Page<Item>>() {
+        fmaApiService.getArtistByName(new NetworkRequestListener<Page<Item>>() {
             @Override
             public void onSuccess(@Nullable Page<Item> response, int statusCode) {
                 if (statusCode == HttpURLConnection.HTTP_OK && response != null) {
@@ -146,7 +160,7 @@ public class AlbumDetailFragment extends BaseItemDetailFragment<Album> {
                     // Setting artist image when details info is loaded
                     if (mArtistImage != null) {
                         mArtistImage.setErrorImageResId(R.drawable.artist_icon);
-                        mArtistImage.setImageUrl(mArtist.getImage(), FmaApplication.getInstance().getImageLoader());
+                        mArtistImage.setImageUrl(mArtist.getImage(), imageLoader);
                     }
                     if (mArtistCreationDate != null) {
                         mArtistCreationDate.setText(AppUtils.getCreationDateOnly(mArtist.getCreationDate()));
@@ -160,40 +174,49 @@ public class AlbumDetailFragment extends BaseItemDetailFragment<Album> {
                     ", errorMessage: " + errorMessage);
 
             }
-        }, mItem.getArtistName());
+        }, item.getArtistName());
     }
 
     @Override
     protected void showBasicView() {
-        mAlbumImageView.setImageUrl(mItem.getImageFile(), FmaApplication.getInstance().getImageLoader());
-        mTitleView.setText(mItem.getTitle());
-        mArtistName.setText(mItem.getArtistName());
+        mAlbumImageView.setImageUrl(item.getImageFile(), imageLoader);
+        mTitleView.setText(item.getTitle());
+        mArtistName.setText(item.getArtistName());
         mArtistImage.setImageResource(R.drawable.artist_icon);
 
-        boolean isDetailsAvailable = !TextUtils.isEmpty(mItem.getInformation());
+        boolean isDetailsAvailable = !TextUtils.isEmpty(item.getInformation());
 
         if (isDetailsAvailable) {
             mTitleView.setPaintFlags(mTitleView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-            mTitleView.setTextColor(ContextCompat.getColor(mActivity, R.color.colorAccent));
+            mTitleView.setTextColor(ContextCompat.getColor(activity, R.color.colorAccent));
             mTitleView.setOnClickListener(v ->
-                AppUtils.showCustomDialog(mActivity, mItem.getInformation()));
+                AppUtils.showCustomDialog(activity, item.getInformation()));
         }
     }
 
     @Override
     public void refresh() {
         super.refresh();
-        new NetworkManager().getTracksByAlbumId(mNetworkRequestListener, mItem.getId(), mPage);
+        fmaApiService.getTracksByAlbumId(mNetworkRequestListener, item.getId(), mPage);
     }
 
     @OnClick(R.id.artist_info_container)
     public void onArtistInfoClick(View v) {
-        mNavigationManager.showArtistDetailFragment(mArtist);
+        navigationManager.showArtistDetailFragment(mArtist);
     }
 
     @Override
     public void onActivityCreated(@android.support.annotation.Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        FmaApplication.get(activity).getApplicationComponent().inject(this);
+        ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+        }
+    }
+
+    @Override
+    public void onItemClicked(Item item, RecyclerView.ViewHolder holder) {
+        navigationManager.showTrackPlayFragment(adapter.getItems(), holder.getAdapterPosition());
     }
 }

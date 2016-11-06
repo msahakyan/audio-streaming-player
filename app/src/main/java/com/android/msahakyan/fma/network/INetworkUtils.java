@@ -12,7 +12,7 @@ import java.util.Map;
  * Created by msahakyan on 01/07/16.
  */
 
-public interface INetworkChannel {
+public interface INetworkUtils {
 
     /**
      * A result of the execution will be returned to the registered callback {@link NetworkRequestListener}
@@ -56,8 +56,8 @@ public interface INetworkChannel {
      * @param <T>             Data type
      * @return <code>com.android.msahakyan.fma.network.CancelableRequest</code>
      */
-    <T> CancelableRequest<T> specialRequestGet(@Nullable String endpoint, @NonNull NetworkRequestListener<T> requestListener,
-                                               @NonNull NetworkResponseParser<T> parser, @Nullable Map<String, String> params, Request.Priority priority);
+    <T> CancelableRequest<T> requestGetToFixedEndpoint(@Nullable String endpoint, @NonNull NetworkRequestListener<T> requestListener,
+                                                       @NonNull NetworkResponseParser<T> parser, @Nullable Map<String, String> params, Request.Priority priority);
 
     interface NetworkResponseParser<T> {
         T parseNetworkResponse(JsonElement networkResponse);

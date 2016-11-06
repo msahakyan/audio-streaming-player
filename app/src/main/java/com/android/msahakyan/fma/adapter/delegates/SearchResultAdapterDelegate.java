@@ -9,14 +9,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.msahakyan.fma.R;
-import com.android.msahakyan.fma.activity.MainActivity;
-import com.android.msahakyan.fma.fragment.FragmentNavigationManager;
+import com.android.msahakyan.fma.adapter.ItemClickListener;
 import com.android.msahakyan.fma.model.SearchResultItem;
-import com.android.msahakyan.fma.network.NetworkManager;
 import com.android.msahakyan.fma.network.NetworkRequestListener;
 import com.android.msahakyan.fma.util.Item;
 
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
@@ -29,12 +26,11 @@ import timber.log.Timber;
 
 public class SearchResultAdapterDelegate extends BaseAdapterDelegate {
 
-    public SearchResultAdapterDelegate(Context ctx) {
-        super(ctx, TYPE_SEARCH_RESULT);
-    }
+    private ItemClickListener<Item> listener;
 
-    public SearchResultAdapterDelegate(Context ctx, @ElementViewType int viewType) {
-        super(ctx, viewType);
+    public SearchResultAdapterDelegate(Context ctx, ItemClickListener<Item> listener) {
+        super(ctx, TYPE_SEARCH_RESULT);
+        this.listener = listener;
     }
 
     @NonNull
@@ -47,14 +43,15 @@ public class SearchResultAdapterDelegate extends BaseAdapterDelegate {
     public void onBindViewHolder(@NonNull List<Item> items, int position, @NonNull RecyclerView.ViewHolder holder) {
         SearchResultItem resultItem = (SearchResultItem) items.get(position);
         SearchItemViewHolder viewHolder = (SearchItemViewHolder) holder;
-        viewHolder.mTitle.setText(resultItem.getTrackTitle());
-        viewHolder.mArtistName.setText(getContext().getString(R.string.artist_name_wrapper, resultItem.getArtistName()));
+        viewHolder.title.setText(resultItem.getTrackTitle());
+        viewHolder.artistName.setText(getContext().getString(R.string.artist_name_wrapper, resultItem.getArtistName()));
         viewHolder.itemView.setOnClickListener(v ->
-            new NetworkManager().getTrackById(new NetworkRequestListener<Item>() {
+            fmaApiService.getTrackById(new NetworkRequestListener<Item>() {
                 @Override
-                public void onSuccess(@Nullable Item response, int statusCode) {
-                    List<Item> fakeItems = Collections.singletonList(response);
-                    FragmentNavigationManager.obtain((MainActivity) getContext()).showTrackPlayFragment(fakeItems, 0);
+                public void onSuccess(@Nullable Item item, int statusCode) {
+                    if (listener != null) {
+                        listener.onItemClicked(item, null);
+                    }
                 }
 
                 @Override
@@ -72,9 +69,9 @@ public class SearchResultAdapterDelegate extends BaseAdapterDelegate {
     static class SearchItemViewHolder extends RecyclerView.ViewHolder {
 
         @Bind(R.id.track_title)
-        TextView mTitle;
+        TextView title;
         @Bind(R.id.track_artist_name)
-        TextView mArtistName;
+        TextView artistName;
 
         SearchItemViewHolder(ViewGroup view) {
             super(view);

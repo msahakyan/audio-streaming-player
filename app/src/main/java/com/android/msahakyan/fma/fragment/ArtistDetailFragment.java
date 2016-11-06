@@ -13,19 +13,25 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.msahakyan.fma.R;
+import com.android.msahakyan.fma.adapter.ItemClickListener;
 import com.android.msahakyan.fma.adapter.ItemListAdapter;
-import com.android.msahakyan.fma.app.FmaApplication;
+import com.android.msahakyan.fma.adapter.delegates.AlbumAdapterDelegate;
+import com.android.msahakyan.fma.application.FmaApplication;
+import com.android.msahakyan.fma.model.Album;
 import com.android.msahakyan.fma.model.Artist;
 import com.android.msahakyan.fma.model.Page;
+import com.android.msahakyan.fma.network.FmaApiService;
 import com.android.msahakyan.fma.network.NetworkRequestListener;
-import com.android.msahakyan.fma.network.NetworkManager;
 import com.android.msahakyan.fma.util.AppUtils;
 import com.android.msahakyan.fma.util.Item;
 import com.android.msahakyan.fma.view.FadeInNetworkImageView;
+import com.android.volley.toolbox.ImageLoader;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import timber.log.Timber;
@@ -35,9 +41,14 @@ import timber.log.Timber;
  * Use the {@link ArtistDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ArtistDetailFragment extends BaseItemDetailFragment<Artist> {
+public class ArtistDetailFragment extends BaseItemDetailFragment<Artist> implements ItemClickListener<Item> {
 
     private static final String KEY_ITEM_URL = "KEY_ITEM_URL";
+
+    @Inject
+    FmaApiService fmaApiService;
+    @Inject
+    ImageLoader imageLoader;
 
     @Bind(R.id.list_view)
     RecyclerView mListView;
@@ -126,13 +137,13 @@ public class ArtistDetailFragment extends BaseItemDetailFragment<Artist> {
     }
 
     private void setLayoutManager() {
-        GridLayoutManager layoutManager = new GridLayoutManager(mActivity, 2);
+        GridLayoutManager layoutManager = new GridLayoutManager(activity, 2);
         mListView.setLayoutManager(layoutManager);
         mListView.setAdapter(mAdapter);
     }
 
     private void createAlbumsAdapter() {
-        mAdapter = new ItemListAdapter(mActivity, new ArrayList<>());
+        mAdapter = new ItemListAdapter(activity, new ArrayList<>(), this);
     }
 
     @Override
@@ -151,27 +162,38 @@ public class ArtistDetailFragment extends BaseItemDetailFragment<Artist> {
 
     @Override
     protected void showBasicView() {
-        mArtistImageView.setImageUrl(mItem.getImage(), FmaApplication.getInstance().getImageLoader());
-        mArtistName.setText(mItem.getName());
-        if (mItem.getBio() != null) {
+        mArtistImageView.setImageUrl(item.getImage(), imageLoader);
+        mArtistName.setText(item.getName());
+        if (item.getBio() != null) {
             mArtistBio.setVisibility(View.VISIBLE);
             mArtistBio.setPaintFlags(mArtistBio.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
             mArtistBio.setText(getString(R.string.artist_bio));
-            mArtistBio.setTextColor(ContextCompat.getColor(mActivity, R.color.colorAccent));
+            mArtistBio.setTextColor(ContextCompat.getColor(activity, R.color.colorAccent));
             mArtistBio.setOnClickListener(v ->
-                AppUtils.showCustomDialog(mActivity, mItem.getBio()));
+                AppUtils.showCustomDialog(activity, item.getBio()));
         }
-        mCreationDate.setText(getString(R.string.artist_creation_date, AppUtils.getCreationDateOnly(mItem.getCreationDate())));
-        mFollowers.setText(getString(R.string.artist_favourites, mItem.getFavouritesCount()));
-        mComments.setText(getString(R.string.artist_comments, mItem.getCommentsCount()));
-        if (mItem.getLocation() != null) {
-            mLocation.setText(getString(R.string.artist_location, mItem.getLocation()));
+        mCreationDate.setText(getString(R.string.artist_creation_date, AppUtils.getCreationDateOnly(item.getCreationDate())));
+        mFollowers.setText(getString(R.string.artist_favourites, item.getFavouritesCount()));
+        mComments.setText(getString(R.string.artist_comments, item.getCommentsCount()));
+        if (item.getLocation() != null) {
+            mLocation.setText(getString(R.string.artist_location, item.getLocation()));
         }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        FmaApplication.get(activity).getApplicationComponent().inject(this);
     }
 
     @Override
     public void refresh() {
         super.refresh();
-        new NetworkManager().getAlbumsByArtistName(mNetworkRequestListener, mItem.getName());
+        fmaApiService.getAlbumsByArtistName(mNetworkRequestListener, item.getName());
+    }
+
+    @Override
+    public void onItemClicked(Item item, RecyclerView.ViewHolder holder) {
+        navigationManager.showAlbumDetailFragment((Album) item, (AlbumAdapterDelegate.AlbumViewHolder) holder);
     }
 }

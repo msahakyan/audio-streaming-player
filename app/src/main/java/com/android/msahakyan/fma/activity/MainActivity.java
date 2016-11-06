@@ -2,23 +2,19 @@ package com.android.msahakyan.fma.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.android.msahakyan.fma.R;
-import com.android.msahakyan.fma.app.FmaApplication;
-import com.android.msahakyan.fma.fragment.FragmentNavigationManager;
+import com.android.msahakyan.fma.application.FmaApplication;
+import com.android.msahakyan.fma.di.module.NavigationModule;
 import com.android.msahakyan.fma.fragment.NavigationManager;
 import com.android.msahakyan.fma.fragment.SearchSuggestionsFragment;
-import com.android.msahakyan.fma.network.NetworkChannel;
 import com.android.msahakyan.fma.view.SearchView;
 
 import javax.inject.Inject;
@@ -27,63 +23,46 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @Inject
-    SharedPreferences mSharedPreferences;
-    @Inject
-    NetworkChannel mNetworkChannel;
+    NavigationManager navigationManager;
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
-    private NavigationManager mFragmentNavManager;
     private MenuItem mSearchItem;
     private SearchSuggestionsFragment mSearchFragment;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
-
-        mFragmentNavManager = FragmentNavigationManager.obtain(this);
         setContentView(R.layout.activity_main);
-        injectDependencies();
-
         ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
+        actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        handleIntent(getIntent());
-
-        mFragmentNavManager.showMainPagerFragment();
+        navigationManager.showMainPagerFragment();
     }
 
-    private void injectDependencies() {
-        FmaApplication.getNetworkComponent().inject(this);
+    @Override
+    protected void setupNavigationComponent() {
+        FmaApplication.get(this).getApplicationComponent()
+            .plus(new NavigationModule(this)).inject(this);
     }
 
     public void pressBack() {
         super.onBackPressed();
     }
 
-    private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            //use the query to search your data somehow
-        }
-    }
-
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        handleIntent(intent);
-    }
-
     @Override
     public void onBackPressed() {
-        mFragmentNavManager.onBackPress();
+        navigationManager.onBackPress();
     }
 
     @Override
@@ -108,14 +87,16 @@ public class MainActivity extends AppCompatActivity {
 
         searchView.setOnSearchClickListener(v -> {
             searchView.showCloseButton(false);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+            }
             showSearchSuggestionsFragment();
         });
     }
 
     private void showSearchSuggestionsFragment() {
         if (mSearchFragment == null) {
-            mFragmentNavManager.showSearchSuggestionsFragment();
+            navigationManager.showSearchSuggestionsFragment();
         }
     }
 
@@ -125,12 +106,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        ButterKnife.unbind(this);
-        super.onDestroy();
-    }
-
     public void setSearchFragment(SearchSuggestionsFragment searchFragment) {
         this.mSearchFragment = searchFragment;
     }
@@ -138,10 +113,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == android.R.id.home) {
-            Timber.d("Home pressed");
-            mFragmentNavManager.onBackPress();
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            Timber.d("Home button pressed");
+            navigationManager.onBackPress();
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(false);
+            }
         }
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    @Override
+    protected void onDestroy() {
+        ButterKnife.unbind(this);
+        super.onDestroy();
+    }
+
+    public NavigationManager getNavigationManager() {
+        return navigationManager;
     }
 }

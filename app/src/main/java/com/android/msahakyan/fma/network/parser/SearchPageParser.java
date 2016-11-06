@@ -1,7 +1,7 @@
 package com.android.msahakyan.fma.network.parser;
 
 import com.android.msahakyan.fma.model.SearchResultItem;
-import com.android.msahakyan.fma.network.INetworkChannel;
+import com.android.msahakyan.fma.network.INetworkUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by msahakyan on 05/10/16.
  */
-public class SearchPageParser implements INetworkChannel.NetworkResponseParser<List<SearchResultItem>> {
+public class SearchPageParser implements INetworkUtils.NetworkResponseParser<List<SearchResultItem>> {
 
     private static final String ATTR_A_ROWS = "aRows";
     private final Gson mGson = new Gson();

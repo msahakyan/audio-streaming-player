@@ -3,7 +3,6 @@ package com.android.msahakyan.fma.network;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
 
-import com.android.msahakyan.fma.app.FmaApplication;
 import com.android.msahakyan.fma.model.Album;
 import com.android.msahakyan.fma.model.Artist;
 import com.android.msahakyan.fma.model.Genre;
@@ -21,21 +20,18 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import javax.inject.Inject;
-
 /**
  * Created by msahakyan on 25/07/16.
  */
 
-public class NetworkManager {
+public class FmaApiService {
 
     private static final int DEFAULT_PAGE_SIZE = 100;
 
-    @Inject
-    NetworkChannel mNetworkChannel;
+    private ApiService apiService;
 
-    public NetworkManager() {
-        FmaApplication.getNetworkComponent().inject(this);
+    public FmaApiService(ApiService apiService) {
+        this.apiService = apiService;
     }
 
     // Genres
@@ -47,7 +43,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Genre>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.GENRES, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.GENRES, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     // Artists
@@ -59,7 +55,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Artist>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.ARTISTS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.ARTISTS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     public CancelableRequest<Page<Item>> getArtistById(@NonNull NetworkRequestListener<Page<Item>> requestListener, long artistId) {
@@ -69,7 +65,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Artist>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.ARTISTS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.ARTISTS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     public CancelableRequest<Page<Item>> getArtistByName(@NonNull NetworkRequestListener<Page<Item>> requestListener, String artistName) {
@@ -79,7 +75,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Artist>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.ARTISTS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.ARTISTS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     // Albums
@@ -91,7 +87,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Album>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.ALBUMS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.ALBUMS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     public CancelableRequest<Page<Item>> getAlbumById(@NonNull NetworkRequestListener<Page<Item>> requestListener, long albumId) {
@@ -101,7 +97,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Album>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.ALBUMS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.ALBUMS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     public CancelableRequest<Page<Item>> getAlbumByName(@NonNull NetworkRequestListener<Page<Item>> requestListener, String albumName) {
@@ -111,7 +107,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Album>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.ALBUMS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.ALBUMS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     public CancelableRequest<Page<Item>> getAlbumsByArtistName(@NonNull NetworkRequestListener<Page<Item>> requestListener, String artistName) {
@@ -121,7 +117,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Album>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.ALBUMS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.ALBUMS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     // Tracks
@@ -133,7 +129,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Track>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.TRACKS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.TRACKS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     public CancelableRequest<Page<Item>> getTracksByAlbumId(@NonNull NetworkRequestListener<Page<Item>> requestListener, long albumId, int page) {
@@ -145,7 +141,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Track>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.TRACKS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.TRACKS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     public CancelableRequest<Page<Item>> getTracksByAlbumName(@NonNull NetworkRequestListener<Page<Item>> requestListener, String albumName, int page) {
@@ -157,7 +153,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Track>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.TRACKS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.TRACKS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     public CancelableRequest<Page<Item>> getTracksByArtistId(@NonNull NetworkRequestListener<Page<Item>> requestListener, long artistId, int page) {
@@ -169,7 +165,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Track>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.TRACKS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.TRACKS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     public CancelableRequest<Page<Item>> getTracksByArtistName(@NonNull NetworkRequestListener<Page<Item>> requestListener, String artistName, int page) {
@@ -181,7 +177,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Track>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.TRACKS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.TRACKS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     public CancelableRequest<Item> getTrackById(@NonNull NetworkRequestListener<Item> requestListener, long trackId) {
@@ -190,7 +186,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Track>() {
         }.getType();
 
-        return mNetworkChannel.specialRequestGet(Endpoint.TRACK_DETAIL + trackId + ".json", requestListener, new TrackDetailParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGetToFixedEndpoint(Endpoint.TRACK_DETAIL + trackId + ".json", requestListener, new TrackDetailParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     public CancelableRequest<Page<Item>> getTracksByGenreId(@NonNull NetworkRequestListener<Page<Item>> requestListener, long genreId, int page) {
@@ -202,7 +198,7 @@ public class NetworkManager {
         Type pageType = new TypeToken<Track>() {
         }.getType();
 
-        return mNetworkChannel.requestGet(Endpoint.TRACKS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.TRACKS, requestListener, new PageParser<>(pageType), params, Request.Priority.NORMAL);
     }
 
     public CancelableRequest loadSearchResultsByQuery(@NonNull NetworkRequestListener<List<SearchResultItem>> requestListener, String query) {
@@ -210,6 +206,6 @@ public class NetworkManager {
         params.put("q", String.valueOf(query));
         params.put("limit", String.valueOf(1000));
 
-        return mNetworkChannel.requestGet(Endpoint.SEARCH, requestListener, new SearchPageParser(), params, Request.Priority.NORMAL);
+        return apiService.requestGet(Endpoint.SEARCH, requestListener, new SearchPageParser(), params, Request.Priority.NORMAL);
     }
 }

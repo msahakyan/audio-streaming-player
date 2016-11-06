@@ -1,6 +1,5 @@
 package com.android.msahakyan.fma.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -20,7 +19,7 @@ public abstract class BaseListAdapter<T extends Item> extends RecyclerView.Adapt
     private AdapterDelegatesManager<List<T>> mDelegatesManager;
     private List<T> mItems;
 
-    public BaseListAdapter(Context ctx, List<T> items) {
+    BaseListAdapter(List<T> items) {
         mItems = items;
         mDelegatesManager = new AdapterDelegatesManager<>();
     }
@@ -65,10 +64,6 @@ public abstract class BaseListAdapter<T extends Item> extends RecyclerView.Adapt
             mItems.clear();
             notifyDataSetChanged();
         }
-    }
-
-    public boolean contains(T item) {
-        return mItems.contains(item);
     }
 
     public List<T> getItems() {

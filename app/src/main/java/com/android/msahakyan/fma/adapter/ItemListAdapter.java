@@ -19,16 +19,16 @@ import java.util.List;
 
 public class ItemListAdapter extends BaseListAdapter<Item> {
 
-    public ItemListAdapter(Context context, List<Item> items) {
-        super(context, items);
+    public ItemListAdapter(Context context, List<Item> items, ItemClickListener<Item> clickListener) {
+        super(items);
 
         setAdapterDelegates(Arrays.asList(
-            new GenreAdapterDelegate(context),
-            new ArtistAdapterDelegate(context),
-            new AlbumAdapterDelegate(context),
-            new TrackAdapterDelegate(context),
-            new TrackWithIconAdapterDelegate(context),
-            new SearchResultAdapterDelegate(context)
+            new GenreAdapterDelegate(context, clickListener),
+            new ArtistAdapterDelegate(context, clickListener),
+            new AlbumAdapterDelegate(context, clickListener),
+            new TrackAdapterDelegate(context, clickListener),
+            new TrackWithIconAdapterDelegate(context, clickListener),
+            new SearchResultAdapterDelegate(context, clickListener)
         ));
     }
 }

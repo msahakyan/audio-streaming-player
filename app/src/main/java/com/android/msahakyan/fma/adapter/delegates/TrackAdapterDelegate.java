@@ -8,8 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.msahakyan.fma.R;
-import com.android.msahakyan.fma.activity.MainActivity;
-import com.android.msahakyan.fma.fragment.FragmentNavigationManager;
+import com.android.msahakyan.fma.adapter.ItemClickListener;
 import com.android.msahakyan.fma.model.Track;
 import com.android.msahakyan.fma.util.Item;
 
@@ -24,12 +23,11 @@ import butterknife.ButterKnife;
 
 public class TrackAdapterDelegate extends BaseAdapterDelegate {
 
-    public TrackAdapterDelegate(Context ctx) {
-        this(ctx, TYPE_TRACK);
-    }
+    private final ItemClickListener<Item> listener;
 
-    public TrackAdapterDelegate(Context ctx, @ElementViewType int viewType) {
-        super(ctx, viewType);
+    public TrackAdapterDelegate(Context ctx, ItemClickListener<Item> listener) {
+        super(ctx, TYPE_TRACK);
+        this.listener = listener;
     }
 
     @NonNull
@@ -43,12 +41,14 @@ public class TrackAdapterDelegate extends BaseAdapterDelegate {
         final Track track = (Track) items.get(position);
         TrackViewHolder viewHolder = (TrackViewHolder) holder;
 
-        viewHolder.mTrackNumber.setText(String.valueOf(position + 1));
-        viewHolder.mTitle.setText(track.getTitle());
+        viewHolder.trackNumber.setText(String.valueOf(position + 1));
+        viewHolder.title.setText(track.getTitle());
 
-        viewHolder.mDuration.setText(track.getDuration());
+        viewHolder.duration.setText(track.getDuration());
         viewHolder.itemView.setOnClickListener(v -> {
-            FragmentNavigationManager.obtain((MainActivity) getContext()).showTrackPlayFragment(items, position);
+            if (listener != null) {
+                listener.onItemClicked(track, viewHolder);
+            }
         });
     }
 
@@ -61,11 +61,11 @@ public class TrackAdapterDelegate extends BaseAdapterDelegate {
     static class TrackViewHolder extends RecyclerView.ViewHolder {
 
         @Bind(R.id.track_number)
-        TextView mTrackNumber;
+        TextView trackNumber;
         @Bind(R.id.track_title)
-        TextView mTitle;
+        TextView title;
         @Bind(R.id.track_duration)
-        TextView mDuration;
+        TextView duration;
 
         TrackViewHolder(ViewGroup view) {
             super(view);

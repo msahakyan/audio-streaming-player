@@ -9,11 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.msahakyan.fma.R;
+import com.android.msahakyan.fma.adapter.ItemClickListener;
 import com.android.msahakyan.fma.adapter.ItemListAdapter;
 import com.android.msahakyan.fma.model.SearchResultItem;
 import com.android.msahakyan.fma.util.Item;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
@@ -23,7 +25,7 @@ import timber.log.Timber;
  * Use the {@link SearchResultsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SearchResultsFragment extends BaseLceFragment {
+public class SearchResultsFragment extends BaseLceFragment implements ItemClickListener<Item> {
 
     private static final String KEY_ITEM_LIST = "KEY_ITEM_LIST";
     private static final String KEY_QUERY = "KEY_QUERY";
@@ -31,7 +33,7 @@ public class SearchResultsFragment extends BaseLceFragment {
     @Bind(R.id.list_view)
     RecyclerView mListView;
 
-    private ItemListAdapter mAdapter;
+    private ItemListAdapter adapter;
     private List<Item> mSearchResults;
 
     public SearchResultsFragment() {
@@ -63,13 +65,13 @@ public class SearchResultsFragment extends BaseLceFragment {
     }
 
     private void setLayoutManager() {
-        GridLayoutManager layoutManager = new GridLayoutManager(mActivity, 1);
+        GridLayoutManager layoutManager = new GridLayoutManager(activity, 1);
         mListView.setLayoutManager(layoutManager);
-        mListView.setAdapter(mAdapter);
+        mListView.setAdapter(adapter);
     }
 
     private void createAdapter() {
-        mAdapter = new ItemListAdapter(mActivity, mSearchResults);
+        adapter = new ItemListAdapter(activity, mSearchResults, this);
     }
 
     @Override
@@ -84,13 +86,19 @@ public class SearchResultsFragment extends BaseLceFragment {
         super.onViewCreated(view, savedInstanceState);
         setContentView(mListView);
         setLayoutManager();
-        if (getView() != null && mAdapter != null) {
-            if (mAdapter.getItems().isEmpty()) {
+        if (getView() != null && adapter != null) {
+            if (adapter.getItems().isEmpty()) {
                 showProgressView();
             } else {
                 hideProgressView();
                 Timber.d("Items already loaded -- skip");
             }
         }
+    }
+
+    @Override
+    public void onItemClicked(Item item, RecyclerView.ViewHolder holder) {
+        List<Item> fakeItems = Collections.singletonList(item);
+        navigationManager.showTrackPlayFragment(fakeItems, 0);
     }
 }

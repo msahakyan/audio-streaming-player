@@ -15,14 +15,17 @@ import android.view.ViewGroup;
 
 import com.android.msahakyan.fma.R;
 import com.android.msahakyan.fma.adapter.SearchHistoryAdapter;
+import com.android.msahakyan.fma.application.FmaApplication;
 import com.android.msahakyan.fma.model.SearchResultItem;
-import com.android.msahakyan.fma.network.NetworkManager;
+import com.android.msahakyan.fma.network.FmaApiService;
 import com.android.msahakyan.fma.util.SearchHistoryStack;
 import com.android.msahakyan.fma.view.DividerItemDecoration;
 import com.android.msahakyan.fma.view.SearchView;
 
 import java.net.HttpURLConnection;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import timber.log.Timber;
@@ -36,14 +39,16 @@ public class SearchSuggestionsFragment extends BaseNetworkRequestFragment<List<S
     private static final int SEARCH_QUERY_MAX_LENTH = 100;
     private static final String KEY_QUERY = "SEARCH_QUERY";
 
+    @Inject
+    FmaApiService fmaApiService;
+
     @Bind(R.id.list_view)
-    RecyclerView mRecyclerView;
+    RecyclerView recyclerView;
 
-    private SearchHistoryAdapter mSearchHistoryAdapter;
-    private SearchView mSearchView;
-    private SearchHistoryStack mHistoryStack;
+    private SearchView searchView;
+    private SearchHistoryStack historyStack;
 
-    private String mQuery;
+    private String searchQuery;
 
     public static SearchSuggestionsFragment newInstance() {
         return new SearchSuggestionsFragment();
@@ -72,29 +77,29 @@ public class SearchSuggestionsFragment extends BaseNetworkRequestFragment<List<S
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        setContentView(mRecyclerView);
+        setContentView(recyclerView);
         hideProgressView();
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
 
         initSearchHistoryAdapter();
-        mActivity.setSearchFragment(this);
+        activity.setSearchFragment(this);
     }
 
 
     private void initSearchHistoryAdapter() {
-        mHistoryStack = new SearchHistoryStack(getActivity());
-        List<String> searchHistoryTerms = mHistoryStack.getSearchTermsFromHistory();
-        mSearchHistoryAdapter = new SearchHistoryAdapter(getActivity(), searchHistoryTerms);
+        historyStack = new SearchHistoryStack(getActivity());
+        List<String> searchHistoryTerms = historyStack.getSearchTermsFromHistory();
+        SearchHistoryAdapter searchHistoryAdapter = new SearchHistoryAdapter(getActivity(), searchHistoryTerms);
 
-        mSearchHistoryAdapter.setOnRemoveBtnClickListener(searchHistoryItem -> {
-            mSearchView.clearFocus();
-            mHistoryStack.removeFromHistory(searchHistoryItem);
+        searchHistoryAdapter.setOnRemoveBtnClickListener(searchHistoryItem -> {
+            searchView.clearFocus();
+            historyStack.removeFromHistory(searchHistoryItem);
         });
 
-        mSearchHistoryAdapter.setOnItemClickListener(this::requestSearch);
-        mRecyclerView.setAdapter(mSearchHistoryAdapter);
+        searchHistoryAdapter.setOnItemClickListener(this::requestSearch);
+        recyclerView.setAdapter(searchHistoryAdapter);
     }
 
     @Override
@@ -102,16 +107,16 @@ public class SearchSuggestionsFragment extends BaseNetworkRequestFragment<List<S
         super.onCreateOptionsMenu(menu, inflater);
         MenuItem searchItem = menu.findItem(R.id.item_search);
         searchItem.setVisible(true);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        mSearchView.setIconified(false);
-        mSearchView.setOnSearchClickListener(null);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setIconified(false);
+        searchView.setOnSearchClickListener(null);
 
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 String input = s.trim();
                 if (TextUtils.isEmpty(input)) {
-                    Timber.d("Empty search query -> skip");
+                    Timber.d("Empty search searchQuery -> skip");
                 } else {
                     requestSearch(input);
                 }
@@ -120,22 +125,22 @@ public class SearchSuggestionsFragment extends BaseNetworkRequestFragment<List<S
 
             @Override
             public boolean onQueryTextChange(String s) {
-                mSearchView.showCloseButton(!TextUtils.isEmpty(s));
+                searchView.showCloseButton(!TextUtils.isEmpty(s));
                 String input = truncateInput(s, SEARCH_QUERY_MAX_LENTH);
                 if (s.length() > input.length()) {
-                    mSearchView.setQuery(input, false);
+                    searchView.setQuery(input, false);
                 }
                 return true;
             }
         });
-        if (!TextUtils.isEmpty(mQuery)) {
-            mSearchView.setQuery(mQuery, false);
+        if (!TextUtils.isEmpty(searchQuery)) {
+            searchView.setQuery(searchQuery, false);
         }
     }
 
     private void requestSearch(String query) {
         if (isRequestActive()) {
-            if (query.equals(mQuery)) {
+            if (query.equals(this.searchQuery)) {
                 Timber.d("A search request is already in progress");
                 return;
             } else {
@@ -143,28 +148,28 @@ public class SearchSuggestionsFragment extends BaseNetworkRequestFragment<List<S
             }
         }
         showProgressView();
-        mQuery = query;
+        this.searchQuery = query;
         refresh();
     }
 
     @Override
     public void refresh() {
         super.refresh();
-        if (mSearchView != null) {
-            mSearchView.clearFocus();
+        if (searchView != null) {
+            searchView.clearFocus();
         }
-        setNetworkRequest(new NetworkManager().loadSearchResultsByQuery(getNetworkListener(), mQuery));
+        setNetworkRequest(fmaApiService.loadSearchResultsByQuery(getNetworkListener(), searchQuery));
     }
 
     @Override
     protected void onSuccess(List<SearchResultItem> response, int statusCode) {
         super.onSuccess(response, statusCode);
         hideProgressView();
-        mSearchView.setIconified(true);
+        searchView.setIconified(true);
         if (response != null && statusCode == HttpURLConnection.HTTP_OK) {
-            if (mQuery != null) {
-                mHistoryStack.addToHistory(mQuery);
-                mNavigationManager.showSearchResultsFragment(response, mQuery);
+            if (searchQuery != null) {
+                historyStack.addToHistory(searchQuery);
+                navigationManager.showSearchResultsFragment(response, searchQuery);
             }
         }
     }
@@ -172,10 +177,10 @@ public class SearchSuggestionsFragment extends BaseNetworkRequestFragment<List<S
     @Override
     public void onBeforeDestroyView() {
         super.onBeforeDestroyView();
-        mActivity.setSearchFragment(null);
-        if (mSearchView != null) {
-            mSearchView.setQuery(null, false);
-            mSearchView.setIconified(true);
+        activity.setSearchFragment(null);
+        if (searchView != null) {
+            searchView.setQuery(null, false);
+            searchView.setIconified(true);
         }
     }
 
@@ -184,6 +189,12 @@ public class SearchSuggestionsFragment extends BaseNetworkRequestFragment<List<S
             return src.substring(0, limit);
         }
         return src;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        FmaApplication.get(activity).getApplicationComponent().inject(this);
     }
 }
 

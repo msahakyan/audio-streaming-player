@@ -8,13 +8,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.msahakyan.fma.R;
-import com.android.msahakyan.fma.activity.MainActivity;
-import com.android.msahakyan.fma.app.FmaApplication;
-import com.android.msahakyan.fma.fragment.FragmentNavigationManager;
+import com.android.msahakyan.fma.adapter.ItemClickListener;
 import com.android.msahakyan.fma.model.Artist;
 import com.android.msahakyan.fma.util.Item;
 import com.android.msahakyan.fma.view.FadeInNetworkImageView;
-import com.android.volley.toolbox.ImageLoader;
 
 import java.util.List;
 
@@ -27,16 +24,11 @@ import butterknife.ButterKnife;
 
 public class ArtistAdapterDelegate extends BaseAdapterDelegate {
 
-    private ImageLoader mImageLoader;
+    private ItemClickListener<Item> listener;
 
-    public ArtistAdapterDelegate(Context ctx) {
+    public ArtistAdapterDelegate(Context ctx, ItemClickListener<Item> listener) {
         super(ctx, TYPE_ARTIST);
-        mImageLoader = FmaApplication.getInstance().getImageLoader();
-    }
-
-    public ArtistAdapterDelegate(Context ctx, @ElementViewType int viewType) {
-        super(ctx, viewType);
-        mImageLoader = FmaApplication.getInstance().getImageLoader();
+        this.listener = listener;
     }
 
     @NonNull
@@ -54,9 +46,12 @@ public class ArtistAdapterDelegate extends BaseAdapterDelegate {
 
         viewHolder.mImageView.setErrorImageResId(R.drawable.img_placeholder);
         viewHolder.mImageView.setImageResource(R.drawable.img_placeholder);
-        viewHolder.mImageView.setImageUrl(artist.getImage(), mImageLoader);
-        viewHolder.mImageView.setOnClickListener(v ->
-            FragmentNavigationManager.obtain((MainActivity) getContext()).showArtistDetailFragment(artist));
+        viewHolder.mImageView.setImageUrl(artist.getImage(), imageLoader);
+        viewHolder.mImageView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClicked(artist, null);
+            }
+        });
     }
 
     @Override

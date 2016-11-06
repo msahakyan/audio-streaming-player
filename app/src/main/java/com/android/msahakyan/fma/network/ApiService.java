@@ -3,7 +3,6 @@ package com.android.msahakyan.fma.network;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.android.msahakyan.fma.app.FmaApplication;
 import com.android.msahakyan.fma.util.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -20,16 +19,16 @@ import static com.android.msahakyan.fma.network.Endpoint.BASE_URL;
  * Created by msahakyan on 01/07/16.
  */
 
-public class NetworkChannel implements INetworkChannel {
+public class ApiService implements INetworkUtils {
 
-    private static final int REQUEST_TIMEOUT = 5000; // milliseconds
+    private static final int REQUEST_TIMEOUT = 5000; // 5 sec.
     private static final int MAX_RETRIES = 3;
     private static final int BACKOFF_MULTIPLIER = 1;
 
-    private RequestQueue mRequestQueue;
+    private final RequestQueue requestQueue;
 
-    public NetworkChannel() {
-        mRequestQueue = FmaApplication.getInstance().getRequestQueue();
+    public ApiService(RequestQueue requestQueue) {
+        this.requestQueue = requestQueue;
     }
 
     @Nullable
@@ -46,7 +45,7 @@ public class NetworkChannel implements INetworkChannel {
         request.setHeaders(headers);
         request.setRetryPolicy(new CustomRetryPolicy(REQUEST_TIMEOUT, MAX_RETRIES, BACKOFF_MULTIPLIER));
         request.setPriority(priority == null ? Request.Priority.NORMAL : priority);
-        mRequestQueue.add(request);
+        requestQueue.add(request);
 
         Timber.d("HTTP Request: " + method + "\nURL: " + url);
 
@@ -58,7 +57,7 @@ public class NetworkChannel implements INetworkChannel {
         return request(Request.Method.GET, endpoint, requestListener, parser, params, priority, true);
     }
 
-    public <T> CancelableRequest<T> specialRequestGet(@Nullable String endpoint, @NonNull NetworkRequestListener<T> requestListener, @NonNull NetworkResponseParser<T> parser, @Nullable Map<String, String> params, Request.Priority priority) {
+    public <T> CancelableRequest<T> requestGetToFixedEndpoint(@Nullable String endpoint, @NonNull NetworkRequestListener<T> requestListener, @NonNull NetworkResponseParser<T> parser, @Nullable Map<String, String> params, Request.Priority priority) {
         return request(Request.Method.GET, endpoint, requestListener, parser, params, priority, false);
     }
 

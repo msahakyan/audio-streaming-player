@@ -1,9 +1,14 @@
 package com.android.msahakyan.fma.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 
+import com.android.msahakyan.fma.application.FmaApplication;
 import com.android.msahakyan.fma.network.CancelableRequest;
+import com.android.msahakyan.fma.network.FmaApiService;
 import com.android.msahakyan.fma.network.NetworkRequestListener;
+
+import javax.inject.Inject;
 
 import timber.log.Timber;
 
@@ -19,7 +24,7 @@ public abstract class BaseNetworkRequestFragment<T> extends BaseLceFragment {
         mNetworkRequestListener = new NetworkRequestListener<T>() {
             @Override
             public void onSuccess(T response, int statusCode) {
-                if (mActivity == null || getView() == null) {
+                if (activity == null || getView() == null) {
                     Timber.w("Received response when the fragment has already been destroyed");
                     return;
                 }

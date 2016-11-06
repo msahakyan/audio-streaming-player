@@ -17,24 +17,28 @@ public abstract class BaseItemDetailFragment<T extends Item> extends BaseLceFrag
     protected static final String KEY_ITEM_PARCEL = "key_item_parcel";
 
     @Bind(R.id.main_detail_container)
-    View mContentView;
+    View contentView;
 
-    protected T mItem;
+    protected T item;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mItem = getArguments().getParcelable(KEY_ITEM_PARCEL);
+            item = getArguments().getParcelable(KEY_ITEM_PARCEL);
         }
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setContentView(mContentView);
+        setContentView(contentView);
+    }
 
-        if (mItem != null) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (item != null) {
             showBasicView();
             refresh();
         }
@@ -44,6 +48,6 @@ public abstract class BaseItemDetailFragment<T extends Item> extends BaseLceFrag
     protected abstract void showBasicView();
 
     protected void setItem(T item) {
-        mItem = item;
+        this.item = item;
     }
 }

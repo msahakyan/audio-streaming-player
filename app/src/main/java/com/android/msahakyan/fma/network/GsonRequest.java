@@ -22,12 +22,12 @@ import timber.log.Timber;
  * Created by msahakyan on 24/07/16.
  */
 
-public class GsonRequest<T> extends Request<GsonRequest.ProtocolObject<T>> {
+class GsonRequest<T> extends Request<GsonRequest.ProtocolObject<T>> {
 
     private final Gson mGson = new Gson();
     private final NetworkRequestListener<T> mListener;
     private ResponseEnvelopeParser<T> mNetworkResponseEnvelopeParser;
-    private final NetworkChannel.NetworkResponseParser<T> mParser;
+    private final ApiService.NetworkResponseParser<T> mParser;
 
     private Priority mPriority = Priority.NORMAL;
     private Map<String, String> mParams;
@@ -39,7 +39,7 @@ public class GsonRequest<T> extends Request<GsonRequest.ProtocolObject<T>> {
      *
      * @param url URL of the request to make
      */
-    public GsonRequest(int method, String url, NetworkRequestListener<T> listener, NetworkChannel.NetworkResponseParser<T> parser) {
+    GsonRequest(int method, String url, NetworkRequestListener<T> listener, ApiService.NetworkResponseParser<T> parser) {
         super(method, url, null);
         mListener = listener;
         mParser = parser;
@@ -89,7 +89,7 @@ public class GsonRequest<T> extends Request<GsonRequest.ProtocolObject<T>> {
         return mPriority;
     }
 
-    public void setPriority(Priority priority) {
+    void setPriority(Priority priority) {
         mPriority = priority;
     }
 
@@ -118,15 +118,16 @@ public class GsonRequest<T> extends Request<GsonRequest.ProtocolObject<T>> {
         return mHeaders == null ? super.getHeaders() : mHeaders;
     }
 
-    public void setHeaders(Map<String, String> headers) {
+    void setHeaders(Map<String, String> headers) {
         mHeaders = headers;
     }
 
-    public void setParams(Map<String, String> params) {
+    void setParams(Map<String, String> params) {
         mParams = params;
     }
 
     static class ProtocolObject<T> {
+
         @Nullable
         T data;
 
@@ -141,7 +142,8 @@ public class GsonRequest<T> extends Request<GsonRequest.ProtocolObject<T>> {
     private class DefaultEnvelopeParser implements ResponseEnvelopeParser<T> {
 
         @Override
-        public ProtocolObject<T> parseResponseEnvelope(NetworkResponse response, INetworkChannel.NetworkResponseParser<T> parser) throws UnsupportedEncodingException {
+        public ProtocolObject<T> parseResponseEnvelope(NetworkResponse response, INetworkUtils.NetworkResponseParser<T> parser)
+            throws UnsupportedEncodingException {
             String json = new String(response.data, "UTF-8");
             Timber.v("Network response json : " + json);
             JsonObject jsonObject = null;
@@ -164,7 +166,8 @@ public class GsonRequest<T> extends Request<GsonRequest.ProtocolObject<T>> {
         }
     }
 
-    public interface ResponseEnvelopeParser<T> {
-        ProtocolObject<T> parseResponseEnvelope(NetworkResponse response, INetworkChannel.NetworkResponseParser<T> parser) throws UnsupportedEncodingException;
+    interface ResponseEnvelopeParser<T> {
+        ProtocolObject<T> parseResponseEnvelope(NetworkResponse response, INetworkUtils.NetworkResponseParser<T> parser)
+            throws UnsupportedEncodingException;
     }
 }

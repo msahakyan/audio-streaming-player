@@ -1,4 +1,4 @@
-package com.android.msahakyan.fma.module;
+package com.android.msahakyan.fma.di.module;
 
 import android.app.Application;
 import android.content.SharedPreferences;
@@ -16,9 +16,15 @@ import dagger.Provides;
 @Module
 public class StorageModule {
 
+    /**
+     * Provides singleton instance of default shared preferences
+     *
+     * @param app The application instance
+     * @return a default {@link SharedPreferences} instance from Preferences manager
+     */
     @Provides
     @Singleton
-    public SharedPreferences provideSharedPreferences(Application app) {
+    SharedPreferences provideSharedPreferences(Application app) {
         return PreferenceManager.getDefaultSharedPreferences(app);
     }
 }

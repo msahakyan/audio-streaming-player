@@ -8,12 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.msahakyan.fma.R;
-import com.android.msahakyan.fma.activity.MainActivity;
-import com.android.msahakyan.fma.app.FmaApplication;
-import com.android.msahakyan.fma.fragment.FragmentNavigationManager;
+import com.android.msahakyan.fma.adapter.ItemClickListener;
 import com.android.msahakyan.fma.model.Track;
 import com.android.msahakyan.fma.util.Item;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.List;
@@ -29,15 +26,11 @@ import static com.android.msahakyan.fma.fragment.TracksFragment.QUALIFIER;
 
 public class TrackWithIconAdapterDelegate extends BaseAdapterDelegate {
 
-    private ImageLoader mImageLoader;
+    private final ItemClickListener<Item> listener;
 
-    public TrackWithIconAdapterDelegate(Context ctx) {
-        this(ctx, TYPE_TRACK_WITH_ICON);
-    }
-
-    public TrackWithIconAdapterDelegate(Context ctx, @ElementViewType int viewType) {
-        super(ctx, viewType);
-        mImageLoader = FmaApplication.getInstance().getImageLoader();
+    public TrackWithIconAdapterDelegate(Context ctx, ItemClickListener<Item> listener) {
+        super(ctx, TYPE_TRACK_WITH_ICON);
+        this.listener = listener;
     }
 
     @NonNull
@@ -51,12 +44,14 @@ public class TrackWithIconAdapterDelegate extends BaseAdapterDelegate {
         final Track track = (Track) items.get(position);
         TrackWithIconViewHolder viewHolder = (TrackWithIconViewHolder) holder;
 
-        viewHolder.mTrackImage.setImageResource(R.drawable.img_placeholder);
-        viewHolder.mTrackImage.setImageUrl(track.getImage(), mImageLoader);
-        viewHolder.mTitle.setText(track.getTitle());
+        viewHolder.trackImage.setImageResource(R.drawable.img_placeholder);
+        viewHolder.trackImage.setImageUrl(track.getImage(), imageLoader);
+        viewHolder.title.setText(track.getTitle());
 
-        viewHolder.mTrackImage.setOnClickListener(v -> {
-            FragmentNavigationManager.obtain((MainActivity) getContext()).showTrackPlayFragment(items, position);
+        viewHolder.trackImage.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClicked(track, viewHolder);
+            }
         });
     }
 
@@ -69,9 +64,9 @@ public class TrackWithIconAdapterDelegate extends BaseAdapterDelegate {
     static class TrackWithIconViewHolder extends RecyclerView.ViewHolder {
 
         @Bind(R.id.track_image)
-        NetworkImageView mTrackImage;
+        NetworkImageView trackImage;
         @Bind(R.id.track_title)
-        TextView mTitle;
+        TextView title;
 
         TrackWithIconViewHolder(ViewGroup view) {
             super(view);

@@ -6,6 +6,7 @@ package com.android.msahakyan.fma.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
@@ -16,14 +17,19 @@ import butterknife.ButterKnife;
 
 public abstract class BaseFragment extends Fragment {
 
-    protected MainActivity mActivity;
-    protected NavigationManager mNavigationManager;
+    protected MainActivity activity;
+    protected NavigationManager navigationManager;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mActivity = (MainActivity) context;
-        mNavigationManager = FragmentNavigationManager.obtain(mActivity);
+        activity = (MainActivity) context;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        navigationManager = activity.getNavigationManager();
     }
 
     @Override
@@ -42,16 +48,16 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (!ConnectivityUtil.isConnectedToNetwork(mActivity)) {
-            ConnectivityUtil.notifyNoConnection(mActivity);
+        if (!ConnectivityUtil.isConnectedToNetwork(activity)) {
+            ConnectivityUtil.notifyNoConnection(activity);
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mActivity = null;
-        mNavigationManager = null;
+        navigationManager = null;
+        activity = null;
     }
 
     /**

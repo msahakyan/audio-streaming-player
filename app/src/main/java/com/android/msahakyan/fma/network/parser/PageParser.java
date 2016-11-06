@@ -1,7 +1,7 @@
 package com.android.msahakyan.fma.network.parser;
 
 import com.android.msahakyan.fma.model.Page;
-import com.android.msahakyan.fma.network.INetworkChannel;
+import com.android.msahakyan.fma.network.INetworkUtils;
 import com.android.msahakyan.fma.util.Item;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -16,7 +16,7 @@ import java.util.List;
  * Created by msahakyan on 25/07/16.
  */
 
-public class PageParser<T extends Item> implements INetworkChannel.NetworkResponseParser<Page<T>> {
+public class PageParser<T extends Item> implements INetworkUtils.NetworkResponseParser<Page<T>> {
 
     private static final String ATTR_TITLE = "title";
     private static final String ATTR_MESSAGE = "message";

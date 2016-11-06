@@ -13,10 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.msahakyan.fma.R;
+import com.android.msahakyan.fma.adapter.ItemClickListener;
 import com.android.msahakyan.fma.adapter.ItemListAdapter;
+import com.android.msahakyan.fma.application.FmaApplication;
 import com.android.msahakyan.fma.model.Genre;
 import com.android.msahakyan.fma.model.Page;
-import com.android.msahakyan.fma.network.NetworkManager;
+import com.android.msahakyan.fma.network.FmaApiService;
 import com.android.msahakyan.fma.network.NetworkRequestListener;
 import com.android.msahakyan.fma.util.AppUtils;
 import com.android.msahakyan.fma.util.InfiniteScrollListener;
@@ -28,6 +30,8 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import timber.log.Timber;
 
@@ -36,19 +40,23 @@ import timber.log.Timber;
  * Use the {@link TracksFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TracksFragment extends BaseNetworkRequestFragment<Page<Item>> implements MoreDataLoaderView.LoadMoreDataCallback {
+public class TracksFragment extends BaseNetworkRequestFragment<Page<Item>> implements
+    MoreDataLoaderView.LoadMoreDataCallback, ItemClickListener<Item> {
 
     public static final String QUALIFIER = "TRACK_WITH_ICON";
 
     private static final int DEFAULT_THRESHOLD = 1;
     private static final String KEY_SELECTED_GENRE = "KEY_SELECTED_GENRE";
 
+    @Inject
+    FmaApiService fmaApiService;
+
     @Bind(R.id.list_view)
     RecyclerView mListView;
     @Bind(R.id.loading_footer)
     MoreDataLoaderView mLoadingFooter;
 
-    private ItemListAdapter mAdapter;
+    private ItemListAdapter adapter;
     private InfiniteScrollListener mInfiniteScrollListener;
     private Genre mSelectedGenre;
     private int mPage = 1;
@@ -81,7 +89,7 @@ public class TracksFragment extends BaseNetworkRequestFragment<Page<Item>> imple
         mInfiniteScrollListener = new InfiniteScrollListener(DEFAULT_THRESHOLD) {
             @Override
             protected void onLoadMore() {
-                mLoadingFooter.setLoadingShown(isResumed() && mAdapter.getItemCount() > 0);
+                mLoadingFooter.setLoadingShown(isResumed() && adapter.getItemCount() > 0);
                 loadMoreData();
             }
         };
@@ -89,18 +97,18 @@ public class TracksFragment extends BaseNetworkRequestFragment<Page<Item>> imple
     }
 
     private void setLayoutManager() {
-        GridLayoutManager layoutManager = new GridLayoutManager(mActivity, 2);
+        GridLayoutManager layoutManager = new GridLayoutManager(activity, 2);
         mListView.setLayoutManager(layoutManager);
         mInfiniteScrollListener.setLayoutManager(layoutManager);
 
         mListView.addOnScrollListener(mInfiniteScrollListener);
-        mListView.setAdapter(mAdapter);
+        mListView.setAdapter(adapter);
         mListView.addItemDecoration(new ItemDecorator(3, 3));
     }
 
     private void createAdapter() {
         mPage = 1;
-        mAdapter = new ItemListAdapter(mActivity, new ArrayList<>());
+        adapter = new ItemListAdapter(activity, new ArrayList<>(), this);
     }
 
     @Override
@@ -115,8 +123,8 @@ public class TracksFragment extends BaseNetworkRequestFragment<Page<Item>> imple
         super.onViewCreated(view, savedInstanceState);
         setContentView(mListView);
         setLayoutManager();
-        if (getView() != null && mAdapter != null) {
-            if (mAdapter.getItems().isEmpty()) {
+        if (getView() != null && adapter != null) {
+            if (adapter.getItems().isEmpty()) {
                 showProgressView();
                 refresh();
             } else {
@@ -142,25 +150,25 @@ public class TracksFragment extends BaseNetworkRequestFragment<Page<Item>> imple
 
     private void showTracks(List<Item> items) {
         AppUtils.setCollectionQualifier(items, QUALIFIER);
-        mAdapter.addAll(items);
+        adapter.addAll(items);
     }
 
     @Override
     protected void onError(int statusCode, String errorMessage) {
         super.onError(statusCode, errorMessage);
         hideProgressView();
-        Toast.makeText(mActivity, "Status code: " + statusCode + " error: " + errorMessage, Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, "Status code: " + statusCode + " error: " + errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void refresh() {
         super.refresh();
-        setNetworkRequest(new NetworkManager().getTracksByGenreId(getNetworkListener(), mSelectedGenre.getId(), mPage));
+        setNetworkRequest(fmaApiService.getTracksByGenreId(getNetworkListener(), mSelectedGenre.getId(), mPage));
     }
 
     @Override
     public void loadMoreData() {
-        new NetworkManager().getTracksByGenreId(new NetworkRequestListener<Page<Item>>() {
+        fmaApiService.getTracksByGenreId(new NetworkRequestListener<Page<Item>>() {
             @Override
             public void onSuccess(@Nullable Page<Item> response, int statusCode) {
                 if (statusCode == HttpURLConnection.HTTP_OK && response != null) {
@@ -185,14 +193,25 @@ public class TracksFragment extends BaseNetworkRequestFragment<Page<Item>> imple
         if (mLoadingFooter != null) {
             mLoadingFooter.setLoadingShown(false);
         }
-        mAdapter.addAll(result);
+        adapter.addAll(result);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if (mActivity != null) {
-            mActivity.showSearchIcon(true);
+        if (activity != null) {
+            activity.showSearchIcon(true);
         }
+    }
+
+    @Override
+    public void onItemClicked(Item item, RecyclerView.ViewHolder holder) {
+        navigationManager.showTrackPlayFragment(adapter.getItems(), holder.getAdapterPosition());
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        FmaApplication.get(activity).getApplicationComponent().inject(this);
     }
 }
