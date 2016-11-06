@@ -10,7 +10,7 @@ You can download application apk file instantly from the following link: <a href
 
 # Application description
 <p>
-Free Music is a streaming application for Android that lets you listen and download instantly to more than 100 thousand songs with integrated search functionality all available in `Free Music Archive` web site (http://freemusicarchive.org/).  
+<b>Free Music</b> is a streaming application for Android that lets you listen and download instantly to more than 100 thousand songs with integrated search functionality all available in `Free Music Archive` web site (http://freemusicarchive.org/).  
 It requires <b>no sign up</b>, displays <b>no ads</b> and is <b>100% free and safe</b>.
 </p>
 
